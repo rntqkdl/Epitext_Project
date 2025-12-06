@@ -41,7 +41,6 @@
 ├── raw_data/
 └── README.md
 
-text
 
 ---
 
@@ -52,7 +51,6 @@ text
 git clone <repository-url>
 cd 1_data
 
-text
 
 ### 2. 가상환경 생성 (권장)
 
@@ -60,19 +58,16 @@ text
 python -m venv venv
 venv\Scripts\activate
 
-text
 
 **Mac/Linux**
 python -m venv venv
 source venv/bin/activate
 
-text
 
 ### 3. 필요 라이브러리 설치
 
 pip install -r requirements.txt
 
-text
 
 ---
 
@@ -83,7 +78,6 @@ text
 cd crawlers
 python klc_crawler.py
 
-text
 
 결과: `raw_data/` 폴더에 이미지 및 CSV 저장
 
@@ -102,7 +96,6 @@ text
 cd preprocess/nlp
 python 01_text_clean.py
 
-text
 
 **입력**
 - `raw_data/doc_id_transcript_dataset.csv`
@@ -123,7 +116,6 @@ text
 cd preprocess/vision
 python 01_easyocr_filter.py
 
-text
 
 **입력**
 - `raw_data/images/`
@@ -148,7 +140,6 @@ text
 cd eda/nlp
 python 01_text_stats.py
 
-text
 
 **입력**
 - `raw_data/doc_id_split_sentences.csv`
@@ -169,7 +160,6 @@ text
 cd eda/vision
 python 01_quality_analysis.py
 
-text
 
 **입력**
 - `raw_data/image_quality_metrics.csv`
@@ -200,7 +190,6 @@ EASYOCR_LANGS = ["ch_tra"]
 EDA 파라미터
 BAD_INDICATOR_THRESHOLD = 2
 
-text
 
 ---
 
@@ -214,13 +203,11 @@ text
 cd 1_data/preprocess/nlp
 python 01_text_clean.py
 
-text
 
 또는 코드에서 절대경로 사용:
 from pathlib import Path
 INPUT_CSV = Path(file).parent.parent.parent / "raw_data" / "파일명.csv"
 
-text
 
 ---
 
@@ -230,12 +217,10 @@ text
 pip uninstall torch
 pip install torch torchvision --index-url https://download.pytorch.org/whl/cu118
 
-text
 
 **CPU 버전**
 pip install torch torchvision
 
-text
 
 ---
 
@@ -244,7 +229,6 @@ text
 파일 저장 시 encoding 명시:
 df.to_csv("output.csv", encoding="utf-8-sig")
 
-text
 
 ---
 
@@ -257,14 +241,12 @@ doc_id,transcript
 gsko_001_0001,"大明萬曆四十三年乙卯..."
 gsko_001_0002,"崇禎紀元後..."
 
-text
 
 **doc_id_split_sentences.csv**
 doc_id,sentence
 gsko_001_0001,大明萬曆四十三年乙卯
 gsko_001_0001,王子生員李氏
 
-text
 
 ---
 
