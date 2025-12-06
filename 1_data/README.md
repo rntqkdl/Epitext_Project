@@ -15,33 +15,32 @@
 ## 폴더 구조
 
 1_data/
-├── config.py # 통합 설정 파일
-├── crawlers/ # 데이터 수집
+├── config.py
+├── crawlers/
 │ ├── init.py
-│ └── klc_crawler.py # 한국학중앙연구원 크롤러
-├── utils/ # 공통 유틸리티
+│ └── klc_crawler.py
+├── utils/
 │ ├── init.py
-│ ├── file_handler.py # 파일 입출력
-│ └── logger.py # 로깅
-├── preprocess/ # 전처리
-│ ├── nlp/ # 자연어 전처리
+│ ├── file_handler.py
+│ └── logger.py
+├── preprocess/
+│ ├── nlp/
 │ │ ├── init.py
-│ │ └── 01_text_clean.py # 텍스트 노이즈 제거
-│ └── vision/ # 이미지 전처리
+│ │ └── 01_text_clean.py
+│ └── vision/
 │ ├── init.py
-│ └── 01_easyocr_filter.py # 탁본 이미지 필터링
-├── eda/ # 탐색적 데이터 분석
-│ ├── nlp/ # 자연어 EDA
+│ └── 01_easyocr_filter.py
+├── eda/
+│ ├── nlp/
 │ │ ├── init.py
-│ │ └── 01_text_stats.py # 문장 길이 통계, Vocab 분석
-│ └── vision/ # 이미지 EDA
+│ │ └── 01_text_stats.py
+│ └── vision/
 │ ├── init.py
-│ └── 01_quality_analysis.py # 품질 지표 분석
-├── translation/ # 번역 (예정)
-├── raw_data/ # 원본 데이터 (Git 제외)
-└── README.md # 본 파일
+│ └── 01_quality_analysis.py
+├── translation/
+├── raw_data/
+└── README.md
 
-text
 
 ---
 
@@ -52,7 +51,6 @@ text
 git clone <repository-url>
 cd 1_data
 
-text
 
 ### 2. 가상환경 생성 (권장)
 
@@ -60,19 +58,16 @@ text
 python -m venv venv
 venv\Scripts\activate
 
-text
 
 **Mac/Linux**
 python -m venv venv
 source venv/bin/activate
 
-text
 
 ### 3. 필요 라이브러리 설치
 
 pip install -r requirements.txt
 
-text
 
 ---
 
@@ -82,8 +77,6 @@ text
 
 cd crawlers
 python klc_crawler.py
-
-text
 
 결과: `raw_data/` 폴더에 이미지 및 CSV 저장
 
@@ -102,7 +95,6 @@ text
 cd preprocess/nlp
 python 01_text_clean.py
 
-text
 
 **입력**
 - `raw_data/doc_id_transcript_dataset.csv`
@@ -123,7 +115,6 @@ text
 cd preprocess/vision
 python 01_easyocr_filter.py
 
-text
 
 **입력**
 - `raw_data/images/`
@@ -148,7 +139,6 @@ text
 cd eda/nlp
 python 01_text_stats.py
 
-text
 
 **입력**
 - `raw_data/doc_id_split_sentences.csv`
@@ -169,7 +159,6 @@ text
 cd eda/vision
 python 01_quality_analysis.py
 
-text
 
 **입력**
 - `raw_data/image_quality_metrics.csv`
@@ -194,13 +183,11 @@ text
 RAW_DATA_DIR = Path(file).parent / "raw_data"
 
 전처리 파라미터
-MIN_SENTENCE_LENGTH = 20 # 최소 문장 길이
-EASYOCR_LANGS = ["ch_tra"] # 중국어 번체
+MIN_SENTENCE_LENGTH = 20
+EASYOCR_LANGS = ["ch_tra"]
 
 EDA 파라미터
-BAD_INDICATOR_THRESHOLD = 2 # 품질 이상치 기준
-
-text
+BAD_INDICATOR_THRESHOLD = 2
 
 ---
 
@@ -214,13 +201,10 @@ text
 cd 1_data/preprocess/nlp
 python 01_text_clean.py
 
-text
 
 또는 코드에서 절대경로 사용:
 from pathlib import Path
 INPUT_CSV = Path(file).parent.parent.parent / "raw_data" / "파일명.csv"
-
-text
 
 ---
 
@@ -230,12 +214,10 @@ text
 pip uninstall torch
 pip install torch torchvision --index-url https://download.pytorch.org/whl/cu118
 
-text
 
 **CPU 버전**
 pip install torch torchvision
 
-text
 
 ---
 
@@ -244,7 +226,6 @@ text
 파일 저장 시 encoding 명시:
 df.to_csv("output.csv", encoding="utf-8-sig")
 
-text
 
 ---
 
@@ -257,14 +238,12 @@ doc_id,transcript
 gsko_001_0001,"大明萬曆四十三年乙卯..."
 gsko_001_0002,"崇禎紀元後..."
 
-text
 
 **doc_id_split_sentences.csv**
 doc_id,sentence
 gsko_001_0001,大明萬曆四十三年乙卯
 gsko_001_0001,王子生員李氏
 
-text
 
 ---
 
