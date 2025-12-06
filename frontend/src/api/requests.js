@@ -34,7 +34,7 @@ export const getRubbingList = async (status = null) => {
 
     // 백엔드가 이미 포맷팅된 데이터를 반환하므로 그대로 사용
     // 필요시 추가 변환만 수행
-    console.log("📦 백엔드 응답 데이터:", response.data);
+    console.log("백엔드 응답 데이터:", response.data);
     const formattedData = (response.data || []).map((item) => ({
       id: item.id,
       status: item.status || "처리중",
@@ -49,7 +49,7 @@ export const getRubbingList = async (status = null) => {
       filename: item.filename,
       index: item.index, // 테이블 번호
     }));
-    console.log("✅ 변환된 데이터:", formattedData);
+    console.log("변환된 데이터:", formattedData);
 
     return formattedData;
   } catch (error) {

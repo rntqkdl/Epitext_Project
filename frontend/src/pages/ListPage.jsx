@@ -16,7 +16,7 @@ const ListPage = ({ onUploadClick, onComplete, onViewDetail, activeMenu }) => {
       const status = menuToStatus(activeMenu);
       const data = await getRubbingList(status);
       setRubbings(data || []);
-      console.log(`✅ Loaded ${data?.length || 0} rubbings for menu: ${activeMenu}, status: ${status}`);
+      console.log(`Loaded ${data?.length || 0} rubbings for menu: ${activeMenu}, status: ${status}`);
     } catch (error) {
       console.error("Failed to load rubbings:", error);
       setRubbings([]);
