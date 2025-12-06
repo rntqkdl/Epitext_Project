@@ -40,7 +40,7 @@ try:
     from ai_modules.ocr_engine import get_ocr_engine
     from ai_modules.preprocessor_unified import preprocess_image_unified
 except ImportError as e:
-    logger.error(f"❌ 모듈 import 실패: {e}")
+    logger.error(f"모듈 import 실패: {e}")
     logger.error("ai_modules 폴더와 필요한 모델 파일들이 있는지 확인하세요.")
     sys.exit(1)
 
@@ -59,7 +59,7 @@ def format_ocr_results(raw_results, image_filename):
     formatted_list = []
     
     if not raw_results:
-        logger.warning("⚠️ 원본 OCR 결과가 비어있습니다.")
+        logger.warning("원본 OCR 결과가 비어있습니다.")
         return {
             "image": image_filename,
             "results": []
@@ -68,7 +68,7 @@ def format_ocr_results(raw_results, image_filename):
     order_counter = 0
     for idx, item in enumerate(raw_results):
         if not isinstance(item, dict):
-            logger.warning(f"⚠️ 잘못된 데이터 형식 (idx={idx}): {type(item)}")
+            logger.warning(f"잘못된 데이터 형식 (idx={idx}): {type(item)}")
             continue
         
         # 좌표 추출 및 리스트 변환 (여러 키 이름 지원)
@@ -104,7 +104,7 @@ def format_ocr_results(raw_results, image_filename):
             max_x = float(max_x) if max_x is not None else 0.0
             max_y = float(max_y) if max_y is not None else 0.0
         except (ValueError, TypeError) as e:
-            logger.warning(f"⚠️ 좌표 변환 실패 (idx={idx}): {e}")
+            logger.warning(f"좌표 변환 실패 (idx={idx}): {e}")
             continue
         
         # 좌표가 모두 0이고 width/height도 없으면 스킵
@@ -120,12 +120,12 @@ def format_ocr_results(raw_results, image_filename):
                 max_x = float(center_x + width / 2)
                 max_y = float(center_y + height / 2)
             else:
-                logger.warning(f"⚠️ 좌표가 모두 0이고 width/height도 없음 (idx={idx}, text={item.get('text', '')}) - 스킵")
+                logger.warning(f"좌표가 모두 0이고 width/height도 없음 (idx={idx}, text={item.get('text', '')}) - 스킵")
                 continue
         
         # 유효성 검사
         if max_x <= min_x or max_y <= min_y:
-            logger.warning(f"⚠️ 잘못된 좌표 범위 (idx={idx}): ({min_x}, {min_y}) -> ({max_x}, {max_y}) - 스킵")
+            logger.warning(f"잘못된 좌표 범위 (idx={idx}): ({min_x}, {min_y}) -> ({max_x}, {max_y}) - 스킵")
             continue
         
         new_item = {
@@ -169,7 +169,7 @@ def draw_bboxes(image_path, results, output_path):
             # 한글 경로가 안 되면 일반 방법 시도
             img = cv2.imread(image_path)
             if img is None:
-                logger.warning("❌ 이미지 로드 실패 (시각화 건너뜀)")
+                logger.warning("이미지 로드 실패 (시각화 건너뜀)")
                 return
         
         box_count = 0
@@ -185,7 +185,7 @@ def draw_bboxes(image_path, results, output_path):
             # 'box' 키에서 좌표 가져오기
             box = item.get('box', [0, 0, 0, 0])
             if not isinstance(box, list) or len(box) != 4:
-                logger.warning(f"⚠️ 잘못된 box 형식: {box} (order={item.get('order', 'unknown')})")
+                logger.warning(f"잘못된 box 형식: {box} (order={item.get('order', 'unknown')})")
                 continue
                 
             try:
@@ -194,12 +194,12 @@ def draw_bboxes(image_path, results, output_path):
                 x2 = int(float(box[2]))
                 y2 = int(float(box[3]))
             except (ValueError, TypeError, IndexError) as e:
-                logger.warning(f"⚠️ 좌표 변환 실패: {box} (order={item.get('order', 'unknown')}) - {e}")
+                logger.warning(f"좌표 변환 실패: {box} (order={item.get('order', 'unknown')}) - {e}")
                 continue
             
             # 좌표 유효성 검사
             if x1 >= x2 or y1 >= y2:
-                logger.warning(f"⚠️ 잘못된 좌표 범위: ({x1}, {y1}) -> ({x2}, {y2}) (order={item.get('order', 'unknown')})")
+                logger.warning(f"잘못된 좌표 범위: ({x1}, {y1}) -> ({x2}, {y2}) (order={item.get('order', 'unknown')})")
                 continue
             
             # 이미지 크기 범위 확인 및 조정
@@ -260,13 +260,13 @@ def draw_bboxes(image_path, results, output_path):
         if result:
             with open(output_path, mode='wb') as f:
                 encoded_img.tofile(f)
-            logger.info(f"🖼️  B-Box 이미지 저장됨: {output_path} ({box_count}개 박스)")
+            logger.info(f"B-Box 이미지 저장됨: {output_path} ({box_count}개 박스)")
             logger.info(f"   (🟢Google, 🟣Custom, 🔵MASK1, 🔴MASK2)")
         else:
-            logger.error("❌ 이미지 인코딩 실패")
+            logger.error("이미지 인코딩 실패")
             
     except Exception as e:
-        logger.error(f"❌ 시각화 중 오류 발생: {e}", exc_info=True)
+        logger.error(f"시각화 중 오류 발생: {e}", exc_info=True)
 
 
 def run_ocr(image_path, use_preprocessing=True):
@@ -281,17 +281,17 @@ def run_ocr(image_path, use_preprocessing=True):
         성공 여부
     """
     if not os.path.exists(image_path):
-        logger.error(f"❌ 이미지 파일을 찾을 수 없습니다: {image_path}")
+        logger.error(f"이미지 파일을 찾을 수 없습니다: {image_path}")
         return False
     
-    logger.info(f"🚀 OCR 분석 시작: {image_path}")
+    logger.info(f"OCR 분석 시작: {image_path}")
     
     try:
         # 전처리 (선택사항)
         ocr_image_path = image_path
         preprocess_result = {'success': False}  # 기본값 설정
         if use_preprocessing:
-            logger.info("📸 이미지 전처리 중...")
+            logger.info("이미지 전처리 중...")
             base_dir = os.path.dirname(os.path.abspath(image_path))
             base_name = os.path.splitext(os.path.basename(image_path))[0]
             
@@ -308,40 +308,40 @@ def run_ocr(image_path, use_preprocessing=True):
             
             if preprocess_result.get('success'):
                 ocr_image_path = ocr_preprocessed_path
-                logger.info(f"✅ 전처리 완료: {ocr_preprocessed_path}")
+                logger.info(f"전처리 완료: {ocr_preprocessed_path}")
             else:
-                logger.warning(f"⚠️ 전처리 실패, 원본 이미지 사용: {preprocess_result.get('message')}")
+                logger.warning(f"전처리 실패, 원본 이미지 사용: {preprocess_result.get('message')}")
                 ocr_image_path = image_path
         
         # OCR 엔진 로드
         engine = get_ocr_engine()
-        logger.info("✅ OCR 엔진 로드 완료")
+        logger.info("OCR 엔진 로드 완료")
         
         # OCR 실행 (전처리된 이미지 사용)
         try:
             raw_result = engine.run_ocr(ocr_image_path)
         except Exception as ocr_exception:
-            logger.error(f"❌ OCR 실행 중 예외 발생: {ocr_exception}", exc_info=True)
+            logger.error(f"OCR 실행 중 예외 발생: {ocr_exception}", exc_info=True)
             import traceback
             logger.error(f"Traceback:\n{traceback.format_exc()}")
             return False
         
         if not raw_result:
-            logger.error("❌ OCR 결과가 None입니다.")
+            logger.error("OCR 결과가 None입니다.")
             return False
         
         if not isinstance(raw_result, dict):
-            logger.error(f"❌ OCR 결과가 딕셔너리가 아닙니다: {type(raw_result)}")
+            logger.error(f"OCR 결과가 딕셔너리가 아닙니다: {type(raw_result)}")
             return False
         
         if not raw_result.get('success'):
             error_msg = raw_result.get('error', 'Unknown Error')
-            logger.error(f"❌ OCR 실패: {error_msg}")
+            logger.error(f"OCR 실패: {error_msg}")
             logger.error(f"   raw_result: {raw_result}")
             return False
         
         logger.info("\n" + "="*60)
-        logger.info("✅ OCR 분석 완료")
+        logger.info("OCR 분석 완료")
         logger.info(f"  - Google 인식: {raw_result.get('google_count', 0)}개")
         logger.info(f"  - Custom 인식: {raw_result.get('custom_count', 0)}개")
         logger.info(f"  - 최종 결과: {raw_result.get('final_count', 0)}개")
@@ -357,7 +357,7 @@ def run_ocr(image_path, use_preprocessing=True):
         # 원본 결과 확인
         raw_results = raw_result.get('results', [])
         if not raw_results:
-            logger.error("❌ OCR 결과가 비어있습니다!")
+            logger.error("OCR 결과가 비어있습니다!")
             logger.error(f"   - raw_result keys: {list(raw_result.keys())}")
             logger.error(f"   - final_count: {raw_result.get('final_count', 0)}")
             return False
@@ -374,7 +374,7 @@ def run_ocr(image_path, use_preprocessing=True):
         logger.info(f"[DEBUG] 포맷팅 후 결과 개수: {len(formatted_results)}")
         
         if not formatted_results:
-            logger.error("❌ 포맷팅된 결과가 비어있습니다!")
+            logger.error("포맷팅된 결과가 비어있습니다!")
             logger.error(f"   - 원본 결과 개수: {len(raw_results)}")
             if raw_results:
                 logger.error(f"   - 첫 번째 원본 항목: {raw_results[0]}")
@@ -401,7 +401,7 @@ def run_ocr(image_path, use_preprocessing=True):
         text_count = sum(1 for r in results if r['type'] == 'TEXT')
         
         logger.info("\n" + "="*60)
-        logger.info("📊 최종 통계")
+        logger.info("최종 통계")
         logger.info(f"  - 🟢 Google: {google_count}개")
         logger.info(f"  - 🟣 Custom: {custom_count}개")
         logger.info(f"  - 🔵 MASK1 (짙은 먹물): {mask1_count}개")
@@ -420,7 +420,7 @@ def main():
     """메인 함수"""
     if len(sys.argv) < 2:
         print("="*60)
-        print("📖 사용법:")
+        print("사용법:")
         print("  python dong_ocr.py <이미지_경로>")
         print("")
         print("예시:")
@@ -433,12 +433,12 @@ def main():
     
     # 환경 변수 확인
     if not os.getenv('OCR_WEIGHTS_BASE_PATH'):
-        logger.error("❌ OCR_WEIGHTS_BASE_PATH 환경 변수가 설정되지 않았습니다.")
+        logger.error("OCR_WEIGHTS_BASE_PATH 환경 변수가 설정되지 않았습니다.")
         logger.error("   .env 파일에 OCR_WEIGHTS_BASE_PATH를 설정하세요.")
         sys.exit(1)
     
     if not os.getenv('GOOGLE_CREDENTIALS_JSON'):
-        logger.error("❌ GOOGLE_CREDENTIALS_JSON 환경 변수가 설정되지 않았습니다.")
+        logger.error("GOOGLE_CREDENTIALS_JSON 환경 변수가 설정되지 않았습니다.")
         logger.error("   .env 파일에 GOOGLE_CREDENTIALS_JSON을 설정하세요.")
         sys.exit(1)
     
@@ -446,10 +446,10 @@ def main():
     success = run_ocr(image_path)
     
     if success:
-        logger.info("✅ 모든 작업 완료!")
+        logger.info("모든 작업 완료!")
         sys.exit(0)
     else:
-        logger.error("❌ 작업 실패")
+        logger.error("작업 실패")
         sys.exit(1)
 
 

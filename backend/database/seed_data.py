@@ -24,7 +24,7 @@ def delete_all_data():
         RubbingDetail.query.delete()
         Rubbing.query.delete()
         db.session.commit()
-        print("✅ 기존 데이터 삭제 완료")
+        print("기존 데이터 삭제 완료")
 
 def seed_data(force=False):
     """프론트엔드 mockRubbingList와 동일한 데이터 생성
@@ -39,10 +39,10 @@ def seed_data(force=False):
         existing_count = Rubbing.query.count()
         if existing_count > 0:
             if force:
-                print(f"⚠️  기존 {existing_count}개의 탁본 데이터를 삭제하고 새로 생성합니다.")
+                print(f"기존 {existing_count}개의 탁본 데이터를 삭제하고 새로 생성합니다.")
                 delete_all_data()
             else:
-                print(f"⚠️  이미 {existing_count}개의 탁본 데이터가 존재합니다.")
+                print(f"이미 {existing_count}개의 탁본 데이터가 존재합니다.")
                 print("   기존 데이터를 삭제하려면: python database/seed_data.py --force")
                 return
         
@@ -413,7 +413,7 @@ def seed_data(force=False):
                     db.session.add(inspection)
         
         db.session.commit()
-        print(f"✅ {len(seed_rubbings)}개의 탁본 데이터가 생성되었습니다.")
+        print(f"{len(seed_rubbings)}개의 탁본 데이터가 생성되었습니다.")
         print(f"   - Rubbing: {len(seed_rubbings)}개")
         print(f"   - RubbingDetail: {len([d for d in detail_data.keys()])}개")
         print(f"   - RubbingStatistics: {len([s for s in statistics_data.keys()])}개")
@@ -432,6 +432,6 @@ if __name__ == '__main__':
     try:
         seed_data(force=force)
     except Exception as e:
-        print(f"❌ 시드 데이터 생성 실패: {e}")
+        print(f"시드 데이터 생성 실패: {e}")
         import traceback
         traceback.print_exc()
