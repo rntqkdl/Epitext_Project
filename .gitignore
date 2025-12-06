@@ -1,0 +1,11 @@
+﻿pycache/
+*.py[cod]
+venv/
+1_data/raw_data/
+*.csv
+.db
+3_model/saved_models/.pth
+*.log
+.env
+node_modules/
+.ipynb_checkpoints/
