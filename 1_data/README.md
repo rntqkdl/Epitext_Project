@@ -1,67 +1,284 @@
-﻿# 1_data - 데이터 수집 및 전처리
+﻿# 1_data - 탁본 한문 데이터 처리 파이프라인
 
-## 개요
-탁본 한문 데이터 수집, 전처리, EDA를 위한 코드 모음
+## 프로젝트 개요
+
+한국학중앙연구원 탁본 이미지 및 판독문 데이터를 수집, 전처리, 분석하는 코드 모음
+
+**주요 기능**
+- 웹 크롤링을 통한 데이터 수집
+- 자연어 전처리 (노이즈 제거, 필터링)
+- 이미지 전처리 (EasyOCR 기반 필터링)
+- 탐색적 데이터 분석(EDA)
+
+---
 
 ## 폴더 구조
+
 1_data/
-├── config.py # 통합 설정
+├── config.py # 통합 설정 파일
 ├── crawlers/ # 데이터 수집
-│ ├── base_crawler.py
-│ ├── 01_crawling_kyu.py # 규장각
-│ ├── 01_crawling_historydb.py # 국사편찬위
-│ └── 01_crawling_nrich.py # 문화재연구소
+│ ├── init.py
+│ └── klc_crawler.py # 한국학중앙연구원 크롤러
 ├── utils/ # 공통 유틸리티
-│ ├── db_manager.py
-│ ├── file_handler.py
-│ └── retry_handler.py
-├── preprocess/nlp/ # 자연어 전처리
-│ ├── 01_text_preprocess_github.py
-│ └── 02_text_preprocess_colab.py
-├── eda/ # 데이터 분석
-│ ├── text_eda.py
-│ ├── image_quality_eda.py
-│ └── easyocr_filter_images.py
-├── translation/ # 번역
-│ └── gemini_translation.py
-└── raw_data/ # 원본 데이터 (Git 제외)
+│ ├── init.py
+│ ├── file_handler.py # 파일 입출력
+│ └── logger.py # 로깅
+├── preprocess/ # 전처리
+│ ├── nlp/ # 자연어 전처리
+│ │ ├── init.py
+│ │ └── 01_text_clean.py # 텍스트 노이즈 제거
+│ └── vision/ # 이미지 전처리
+│ ├── init.py
+│ └── 01_easyocr_filter.py # 탁본 이미지 필터링
+├── eda/ # 탐색적 데이터 분석
+│ ├── nlp/ # 자연어 EDA
+│ │ ├── init.py
+│ │ └── 01_text_stats.py # 문장 길이 통계, Vocab 분석
+│ └── vision/ # 이미지 EDA
+│ ├── init.py
+│ └── 01_quality_analysis.py # 품질 지표 분석
+├── translation/ # 번역 (예정)
+├── raw_data/ # 원본 데이터 (Git 제외)
+└── README.md # 본 파일
 
 text
 
-## 실행 방법
+---
 
-### 1. 환경 설정
+## 환경 설정
+
+### 1. 저장소 클론
+
+git clone <repository-url>
+cd 1_data
+
+text
+
+### 2. 가상환경 생성 (권장)
+
+**Windows**
+python -m venv venv
+venv\Scripts\activate
+
+text
+
+**Mac/Linux**
+python -m venv venv
+source venv/bin/activate
+
+text
+
+### 3. 필요 라이브러리 설치
+
 pip install -r requirements.txt
 
 text
 
-### 2. 데이터 수집
-cd 1_data/crawlers
-python 01_crawling_kyu.py
-python 01_crawling_historydb.py
-python 01_crawling_nrich.py
+---
+
+## 데이터 준비
+
+### Option A: 크롤러로 직접 수집
+
+cd crawlers
+python klc_crawler.py
 
 text
 
-### 3. 전처리
-cd 1_data/preprocess/nlp
-python 01_text_preprocess_github.py
+결과: `raw_data/` 폴더에 이미지 및 CSV 저장
 
-text
+### Option B: 기존 데이터 사용
 
-## 주요 기능
-- **데이터 수집**: 규장각, 국사편찬위, 문화재연구소 크롤링
-- **전처리**: 노이즈 제거, 구두점 복원, 문장 분할
-- **번역**: Gemini API 기반 한문 번역
-
-## 출처
-- 크롤링 코드: 팀 자체 작성 (1주차 보고서)
-- 전처리 코드: 팀 자체 작성 (4주차 보고서)
-- 프로젝트: 4조 복원왕 김탁본 (2025)
-
-## 관련 리포지토리
-- https://github.com/jae2022/Epitext_Back
-- https://github.com/jae2022/Epitext_Front
+`raw_data/` 폴더에 다음 파일들을 준비:
+- `doc_id_transcript_dataset.csv` - 판독문 데이터
+- `images/` - 원본 탁본 이미지 폴더
 
 ---
-**작성일**: 2025-12-07
+
+## 실행 방법
+
+### 1. 자연어 전처리
+
+cd preprocess/nlp
+python 01_text_clean.py
+
+text
+
+**입력**
+- `raw_data/doc_id_transcript_dataset.csv`
+
+**출력**
+- `raw_data/doc_id_transcript_dataset_processed.csv`
+
+**처리 내용**
+- 특수문자 제거 (한글, 숫자, 기호 등)
+- 노이즈 키워드 필터링 (譯註, 韓國金石 등)
+- 판독불가 기호 통일 (▦, ▧ → ▨)
+- 20자 미만 문장 제거
+
+---
+
+### 2. 이미지 전처리
+
+cd preprocess/vision
+python 01_easyocr_filter.py
+
+text
+
+**입력**
+- `raw_data/images/`
+
+**출력**
+- `raw_data/filtered_takbon/`
+- `raw_data/filter_log.csv`
+
+**처리 내용**
+- EasyOCR로 텍스트 검출
+- 글자가 있는 이미지만 선별
+- 로그 기반 중복 방지
+
+**주의사항**
+- GPU 사용 권장 (CPU는 매우 느림)
+- 이미 처리된 파일은 로그를 참조하여 건너뜀
+
+---
+
+### 3. 텍스트 통계 분석
+
+cd eda/nlp
+python 01_text_stats.py
+
+text
+
+**입력**
+- `raw_data/doc_id_split_sentences.csv`
+
+**출력**
+- `raw_data/vocab.csv` - 글자 빈도표
+- 콘솔 출력: 문장 길이 통계
+
+**분석 내용**
+- 문장 길이 통계 (평균, 중위수, 분포)
+- 글자 빈도 Top 20
+- 전체 Vocab 추출
+
+---
+
+### 4. 이미지 품질 분석
+
+cd eda/vision
+python 01_quality_analysis.py
+
+text
+
+**입력**
+- `raw_data/image_quality_metrics.csv`
+- `raw_data/filtered_takbon/`
+
+**출력**
+- `raw_data/low_quality_removed/` - 저품질 이미지 이동
+- 시각화: 품질 지표 분포, 상관관계 히트맵
+
+**분석 내용**
+- 7가지 품질 지표 통계
+- IQR 기반 이상치 탐지
+- 저품질 이미지 자동 제거 (threshold=2)
+
+---
+
+## 설정 파일 수정
+
+`config.py`에서 경로 및 파라미터 수정 가능:
+
+데이터 경로
+RAW_DATA_DIR = Path(file).parent / "raw_data"
+
+전처리 파라미터
+MIN_SENTENCE_LENGTH = 20 # 최소 문장 길이
+EASYOCR_LANGS = ["ch_tra"] # 중국어 번체
+
+EDA 파라미터
+BAD_INDICATOR_THRESHOLD = 2 # 품질 이상치 기준
+
+text
+
+---
+
+## 문제 해결
+
+### FileNotFoundError 발생 시
+
+**원인**: 실행 위치가 잘못됨
+
+**해결**: 스크립트가 있는 폴더로 이동
+cd 1_data/preprocess/nlp
+python 01_text_clean.py
+
+text
+
+또는 코드에서 절대경로 사용:
+from pathlib import Path
+INPUT_CSV = Path(file).parent.parent.parent / "raw_data" / "파일명.csv"
+
+text
+
+---
+
+### EasyOCR 설치 오류
+
+**CUDA 지원 torch 재설치 (GPU 사용 시)**
+pip uninstall torch
+pip install torch torchvision --index-url https://download.pytorch.org/whl/cu118
+
+text
+
+**CPU 버전**
+pip install torch torchvision
+
+text
+
+---
+
+### 한글 깨짐 (Windows)
+
+파일 저장 시 encoding 명시:
+df.to_csv("output.csv", encoding="utf-8-sig")
+
+text
+
+---
+
+## 데이터 형식
+
+### 입력 CSV 예시
+
+**doc_id_transcript_dataset.csv**
+doc_id,transcript
+gsko_001_0001,"大明萬曆四十三年乙卯..."
+gsko_001_0002,"崇禎紀元後..."
+
+text
+
+**doc_id_split_sentences.csv**
+doc_id,sentence
+gsko_001_0001,大明萬曆四十三年乙卯
+gsko_001_0001,王子生員李氏
+
+text
+
+---
+
+## 출처 및 라이센스
+
+**프로젝트**: 4조 복원왕 김탁본  
+**출처**: 4주차 보고서 (2025)  
+**작성일**: 2025-12-07  
+**라이센스**: MIT License
+
+---
+
+## 참고 자료
+
+- 한국학중앙연구원 한국금석문: http://gsm.nricp.go.kr/
+- EasyOCR Documentation: https://github.com/JaidedAI/EasyOCR
+- Pandas Documentation: https://pandas.pydata.org/
