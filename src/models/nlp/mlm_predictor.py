@@ -80,7 +80,7 @@ class MLMPredictor:
         print(f"[MLM] 토크나이저가 찾은 [MASK] 위치 개수: {len(mask_indices)}")
         
         if len(mask_indices) == 0:
-            print("[MLM] ⚠️ 경고: [MASK] 토큰을 찾을 수 없습니다!")
+            print("[MLM] 경고: [MASK] 토큰을 찾을 수 없습니다!")
             sample_tokens = self.tokenizer.convert_ids_to_tokens(
                 inputs['input_ids'][0][:50]
             )
