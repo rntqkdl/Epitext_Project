@@ -14,34 +14,35 @@
 
 ## 폴더 구조
 
-1_data/
-├── config.py
-├── crawlers/
-│ ├── init.py
-│ └── klc_crawler.py
-├── utils/
-│ ├── init.py
-│ ├── file_handler.py
-│ └── logger.py
-├── preprocess/
-│ ├── nlp/
-│ │ ├── init.py
-│ │ └── 01_text_clean.py
-│ └── vision/
-│ ├── init.py
-│ └── 01_easyocr_filter.py
-├── eda/
-│ ├── nlp/
-│ │ ├── init.py
-│ │ └── 01_text_stats.py
-│ └── vision/
-│ ├── init.py
-│ └── 01_quality_analysis.py
-├── translation/
-├── raw_data/
-└── README.md
+## 폴더 구조
 
-text
+    1_data/
+    ├── config.py
+    ├── crawlers/
+    │   ├── __init__.py
+    │   └── klc_crawler.py
+    ├── utils/
+    │   ├── __init__.py
+    │   ├── file_handler.py
+    │   └── logger.py
+    ├── preprocess/
+    │   ├── nlp/
+    │   │   ├── __init__.py
+    │   │   └── 01_text_clean.py
+    │   └── vision/
+    │       ├── __init__.py
+    │       └── 01_easyocr_filter.py
+    ├── eda/
+    │   ├── nlp/
+    │   │   ├── __init__.py
+    │   │   └── 01_text_stats.py
+    │   └── vision/
+    │       ├── __init__.py
+    │       └── 01_quality_analysis.py
+    ├── translation/
+    ├── raw_data/
+    └── README.md
+
 
 ---
 
