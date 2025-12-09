@@ -44,3 +44,9 @@ Thumbs.db
 # TensorBoard
 runs/
 logs/
+
+.env
+
+**/results/
+
+**/__pycache__/

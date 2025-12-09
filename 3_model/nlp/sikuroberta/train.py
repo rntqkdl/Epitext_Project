@@ -259,10 +259,10 @@ def main():
     print("\n" + "=" * 70)
     print("🎉 모든 작업 완료!")
     print("=" * 70)
-    print(f"\n📊 TensorBoard 실행:")
+    print(f"\n TensorBoard 실행:")
     print(f"   tensorboard --logdir={PathConfig.TB_LOG_DIR}")
-    print(f"\n📈 Loss 그래프: {PathConfig.GRAPH_SAVE_PATH}")
-    print(f"💾 최종 모델: {PathConfig.FINAL_MODEL_DIR}")
+    print(f"\n Loss 그래프: {PathConfig.GRAPH_SAVE_PATH}")
+    print(f" 최종 모델: {PathConfig.FINAL_MODEL_DIR}")
     print("=" * 70 + "\n")
 
 
