@@ -332,10 +332,10 @@ const DetailPage = ({ item, onBack }) => {
             // 백엔드에 검수 결과 저장
             inspectTarget(rubbingId, charId, checkedCandidate.character, checkedCandidate.candidateId)
               .then(() => {
-                console.log(`검수 결과 저장 완료: Target ${charId}, Character ${checkedCandidate.character}`);
+                console.log(`✅ 검수 결과 저장 완료: Target ${charId}, Character ${checkedCandidate.character}`);
               })
               .catch((error) => {
-                console.error(`검수 결과 저장 실패:`, error);
+                console.error(`❌ 검수 결과 저장 실패:`, error);
                 // 저장 실패 시 UI 롤백
                 setCandidates((prev) => {
                   const rollback = { ...prev };
