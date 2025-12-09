@@ -1,8 +1,17 @@
 ﻿"""
-자연어 처리 전처리 모듈
+NLP Preprocessing Module
 ======================================================================
-작성자: 4조 복원왕 김탁본
-작성일: 2025-12-07
-출처: 4주차 보고서
+설명: 한자 텍스트 노이즈 제거 및 정제 모듈 패키지
+작성자: Epitext Project Team
 ======================================================================
 """
+
+from .config import Config
+from .text_clean import main, clean_text_base, flatten_text
+
+__all__ = [
+    "Config",
+    "main",
+    "clean_text_base",
+    "flatten_text"
+]
