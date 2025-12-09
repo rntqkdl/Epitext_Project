@@ -15,6 +15,7 @@ nlp
 
 ## 3. 사용 방법
 설정 변경
+
 config.py 파일에서 입력 데이터 경로와 분석 옵션을 수정할 수 있습니다.
 INPUT_CSV: 분석할 원본 데이터 파일 경로
 COLUMN_NAME: 분석할 텍스트 컬럼 이름 (예: transcript, sentence)
