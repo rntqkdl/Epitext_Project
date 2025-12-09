@@ -3,7 +3,6 @@ Gemini Translation & Evaluation Pipeline
 ======================================================================
 목적: Gemini API를 활용한 한문 금석문 번역 수행 및 BLEU/BERTScore 자동 평가
 작성자: Epitext Project Team
-날짜: 2025-12-09
 ======================================================================
 """
 
@@ -30,7 +29,6 @@ try:
     from config import Config
     from prompts import SYSTEM_PROMPT, FEW_SHOT_EXAMPLES
 except ImportError:
-    # 실행 위치에 따른 상대 경로 처리
     from .config import Config
     from .prompts import SYSTEM_PROMPT, FEW_SHOT_EXAMPLES
 
