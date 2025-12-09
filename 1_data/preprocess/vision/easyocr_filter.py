@@ -1,30 +1,23 @@
 ﻿"""
-EasyOCR 기반 탁본 이미지 필터링
+EasyOCR Image Filtering
 ======================================================================
-작성자: 4조 복원왕 김탁본
-작성일: 2025-12-07
-출처: 4주차 보고서
-기능: 텍스트가 포함된 탁본 이미지만 선별
+목적: 텍스트가 포함된 탁본 이미지만 선별하여 저장
+작성자: Epitext Project Team
 ======================================================================
 """
 
 import os
 import sys
 import shutil
-from pathlib import Path
-
 import torch
 import easyocr
+from pathlib import Path
 
-
-# ======================================================================
-# 경로 설정
-# ======================================================================
-BASE_DIR = Path(__file__).parent.parent.parent / "raw_data"
-IMAGE_FOLDER_NAME = "images"
-OUTPUT_FOLDER_NAME = "filtered_takbon"
-LOG_FILENAME = "filter_log.csv"
-EASYOCR_LANGS = ["ch_tra"]
+# 로컬 설정 임포트 시도
+try:
+    from config import Config
+except ImportError:
+    from .config import Config
 
 
 # ======================================================================
@@ -40,12 +33,12 @@ def load_log(log_path):
     processed = {}
 
     if not log_path.exists() or log_path.stat().st_size == 0:
-        print("[INFO] 로그 파일 없음 - 새로 생성")
+        print("[Info] No log file found. Creating new log.")
         with open(log_path, "w", encoding="utf-8") as f:
             f.write("filename,status\n")
         return processed
 
-    print("[INFO] 기존 로그 파일 발견 - 이어서 처리")
+    print("[Info] Loading existing log...")
     with open(log_path, "r", encoding="utf-8") as f:
         for line in f:
             line = line.strip()
@@ -60,24 +53,25 @@ def load_log(log_path):
 def init_reader(device):
     """EasyOCR Reader 초기화"""
     use_gpu = device == "cuda"
-    reader = easyocr.Reader(EASYOCR_LANGS, gpu=use_gpu)
-    print(f"[INFO] EasyOCR 초기화 완료 (GPU 사용: {use_gpu})")
+    reader = easyocr.Reader(Config.LANGUAGES, gpu=use_gpu)
+    print(f"[Info] EasyOCR initialized (GPU: {use_gpu})")
     return reader
 
 
 def get_image_list(src_dir):
     """이미지 파일 리스트 반환"""
+    if not src_dir.exists():
+        print(f"[Error] Source directory not found: {src_dir}")
+        return []
+        
     images = sorted(list(src_dir.glob("*.png")) + list(src_dir.glob("*.jpg")))
-    print(f"[INFO] 전체 이미지 개수: {len(images)}")
+    print(f"[Info] Total images found: {len(images)}")
     return images
 
 
 def print_progress(current, total, fname="", prev_status=None):
     """진행률 출력"""
     if total == 0:
-        msg = "진행률: (처리할 이미지 없음)"
-        sys.stdout.write("\r" + msg + " " * max(0, 80 - len(msg)))
-        sys.stdout.flush()
         return
 
     percent = current / total
@@ -86,8 +80,8 @@ def print_progress(current, total, fname="", prev_status=None):
     bar = "=" * filled + "-" * (bar_len - filled)
     prev_txt = prev_status if prev_status else "NEW"
 
-    line = f"[{bar}] {percent*100:5.1f}% ({current}/{total}) | {fname} (이전: {prev_txt})"
-    sys.stdout.write("\r" + line[:200])
+    line = f"[{bar}] {percent*100:5.1f}% ({current}/{total}) | {fname} (Status: {prev_txt})"
+    sys.stdout.write("\r" + line[:120].ljust(120))
     sys.stdout.flush()
 
 
@@ -96,26 +90,23 @@ def print_progress(current, total, fname="", prev_status=None):
 # ======================================================================
 def process_images():
     """EasyOCR 필터링 수행"""
-    src_dir = BASE_DIR / IMAGE_FOLDER_NAME
-    out_dir = BASE_DIR / OUTPUT_FOLDER_NAME
-    log_path = BASE_DIR / LOG_FILENAME
-
-    out_dir.mkdir(parents=True, exist_ok=True)
-
-    print(f"[INFO] 원본 폴더: {src_dir}")
-    print(f"[INFO] 결과 폴더: {out_dir}")
-    print(f"[INFO] 로그 파일: {log_path}")
+    Config.print_config()
+    
+    # 디렉토리 생성
+    Config.OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
 
     device = detect_device()
-    print(f"[INFO] 디바이스: {device}")
+    print(f"[Info] Using device: {device}")
+    
     reader = init_reader(device)
+    processed = load_log(Config.LOG_PATH)
+    images = get_image_list(Config.SRC_DIR)
+    
+    if not images:
+        print("[Error] No images to process.")
+        return
 
-    processed = load_log(log_path)
-    print(f"[INFO] 로그 기록 파일 수: {len(processed)}")
-
-    images = get_image_list(src_dir)
     total_images = len(images)
-
     copied = 0
     skipped = 0
     already_done = 0
@@ -123,15 +114,15 @@ def process_images():
     retried = 0
     recovered_keep = 0
 
-    with open(log_path, "a", encoding="utf-8") as log_f:
+    with open(Config.LOG_PATH, "a", encoding="utf-8") as log_f:
         for idx, img_path in enumerate(images, start=1):
             fname = img_path.name
             prev_status = processed.get(fname)
-            dst = out_dir / fname
+            dst = Config.OUTPUT_DIR / fname
 
             print_progress(idx, total_images, fname, prev_status)
 
-            # 이미 KEEP된 파일
+            # 1. 이미 처리됨 (KEEP)
             if prev_status == "KEEP":
                 if not dst.exists():
                     try:
@@ -141,21 +132,20 @@ def process_images():
                         errors += 1
                         status = f"ERROR:{e.__class__.__name__}"
                         log_f.write(f"{fname},{status}\n")
-                        log_f.flush()
                         continue
                 already_done += 1
                 continue
 
-            # 이미 SKIP된 파일
+            # 2. 이미 처리됨 (SKIP)
             if prev_status == "SKIP":
                 already_done += 1
                 continue
 
-            # ERROR 재시도
+            # 3. 에러 재시도
             if prev_status and prev_status.startswith("ERROR:"):
                 retried += 1
 
-            # OCR 시도
+            # 4. OCR 수행
             try:
                 result = reader.readtext(str(img_path))
 
@@ -174,15 +164,17 @@ def process_images():
             log_f.write(f"{fname},{status}\n")
             log_f.flush()
 
-    print()
-    print("\n=== 처리 요약 ===")
-    print(f"[OK] 이미 끝난 파일: {already_done}")
-    print(f"[OK] 새로 KEEP: {copied}")
-    print(f"[OK] 새로 SKIP: {skipped}")
-    print(f"[ERR] 에러 발생: {errors}")
-    print(f"[RETRY] 재시도: {retried}")
-    print(f"[RECOVER] 복구 복사: {recovered_keep}")
-    print(f"[TOTAL] 현재 필터링된 이미지 수: {len(list(out_dir.iterdir()))}")
+    print("\n\n======================================================")
+    print(" Processing Summary")
+    print("======================================================")
+    print(f" [Done] Already Processed: {already_done}")
+    print(f" [New]  Kept (Text Found): {copied}")
+    print(f" [New]  Skipped (No Text): {skipped}")
+    print(f" [Err]  Errors:            {errors}")
+    print(f" [Info] Retried:           {retried}")
+    print(f" [Info] Recovered:         {recovered_keep}")
+    print(f" [Total] Filtered Images:  {len(list(Config.OUTPUT_DIR.iterdir()))}")
+    print("======================================================")
 
 
 if __name__ == "__main__":

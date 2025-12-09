@@ -1,7 +1,15 @@
 ﻿"""
-이미지 전처리 모듈
+Vision Preprocessing Module
 ======================================================================
-작성자: 4조 복원왕 김탁본
-작성일: 2025-12-07
+설명: EasyOCR 기반 이미지 필터링 모듈 패키지
+작성자: Epitext Project Team
 ======================================================================
 """
+
+from .config import Config
+from .easyocr_filter import process_images
+
+__all__ = [
+    "Config",
+    "process_images"
+]
