@@ -17,7 +17,7 @@ def init_database():
     with app.app_context():
         # 모든 테이블 생성
         db.create_all()
-        print("데이터베이스 테이블이 성공적으로 생성되었습니다.")
+        print("✅ 데이터베이스 테이블이 성공적으로 생성되었습니다.")
         
         # 인덱스 생성 (MySQL의 경우)
         try:
@@ -33,15 +33,15 @@ def init_database():
                 ON rubbings(is_completed)
             """))
             db.session.commit()
-            print("인덱스가 성공적으로 생성되었습니다.")
+            print("✅ 인덱스가 성공적으로 생성되었습니다.")
         except Exception as e:
             # SQLite는 IF NOT EXISTS를 지원하지 않을 수 있음
-            print(f"인덱스 생성 중 오류 (무시 가능): {e}")
+            print(f"⚠️  인덱스 생성 중 오류 (무시 가능): {e}")
 
 if __name__ == '__main__':
     try:
         init_database()
     except Exception as e:
-        print(f"데이터베이스 초기화 실패: {e}")
+        print(f"❌ 데이터베이스 초기화 실패: {e}")
         sys.exit(1)
 
