@@ -1,54 +1,49 @@
-﻿# Vision EDA 모듈 (Image Quality Analysis)
+﻿# PDF 탁본 데이터 추출 모듈 (PDF Extraction Module)
 
-한자 탁본 이미지의 품질 지표를 분석하고, 품질이 낮은 이미지를 자동으로 식별하여 격리하는 모듈입니다.
+이 모듈은 한국학중앙연구원 등의 탁본 조사 보고서(PDF) 형식을 분석하여 **탁본 이미지**와 **메타데이터**, **한자 원문**을 자동으로 추출하고 매칭합니다.
 
 ## 1. 주요 기능
+* **항목 자동 분할**: "01", "02" 등 번호를 기준으로 탁본 항목을 자동 식별
+* **이미지-캡션 매칭**: 이미지 하단의 "앞면", "뒷면" 텍스트를 인식하여 이미지와 연결
+* **한자 원문 추출**: 세로쓰기(우측→좌측)로 된 한자 원문 페이지를 찾아 텍스트 추출
+* **데이터 구조화**: 이미지 경로, 시대, 연도, 원문 등을 CSV 및 JSON으로 저장
 
-* **품질 지표 분석**: 밝기, 명암비, 블러(Blur), 노이즈 등 7가지 지표 분석
-* **이상치 탐지**: IQR(Interquartile Range) 방식을 사용하여 지표별 이상치 식별
-* **자동 필터링**: 나쁜 지표가 일정 개수(Threshold) 이상인 이미지를 별도 폴더로 이동
-
-## 2. 파일 구성
-
+## 2. 폴더 구조
 ```text
-vision/
-├── __init__.py          # 패키지 초기화
-├── config.py            # 설정 파일 (경로, 파라미터)
-├── quality_analysis.py  # 메인 분석 스크립트
-└── README.md            # 설명서
-3. 분석 대상 지표
-illumination_variance: 조명 불균형 (낮을수록 좋음)
+pdf_processing/
+├── config.py          # 설정 (폰트 크기, 정규식 패턴 등)
+├── models.py          # 데이터 구조 (TextLine, EntryBundle 등)
+├── utils.py           # 공통 유틸리티 (한글 판별, 문자열 정규화)
+├── pdf_parser.py      # PDF 구조 분석 및 항목 분할 로직
+├── image_processor.py # 이미지 추출 및 면 병합 로직
+├── text_extractor.py  # 한자 원문 추출 로직
+├── main.py            # 실행 진입점 (CLI 포함)
+└── README.md          # 설명서
 
-global_contrast: 전역 명암비 (높을수록 좋음)
+3. 사용 방법
+사전 요구 사항
+Python 3.8+
+PyMuPDF 설치 필요
 
-local_contrast: 국소 명암비 (높을수록 좋음)
+pip install pymupdf
+실행 방법 (CLI)
+터미널에서 main.py를 실행하며 입력/출력 경로를 지정합니다.
 
-blur_score: 흐림 정도 (낮을수록 좋음)
+# 기본 사용법
+cd 1_data/crawlers/pdf_processing
+python main.py --input "PDF파일_경로" --output "저장할_경로"
 
-smear_noise_ratio: 번짐 노이즈 비율 (낮을수록 좋음)
+# 예시 (Windows)
+python main.py --input "C:\data\pdfs" --output "C:\data\results"
 
-deterioration_mask_ratio: 훼손 영역 비율 (낮을수록 좋음)
+4. 출력 결과
+지정된 출력 폴더(--output)에 다음과 같이 저장됩니다.
 
-bleed_through_likelihood: 뒷면 비침 가능성 (낮을수록 좋음)
+images/{PDF명}/: 추출된 탁본 이미지 파일들 (PNG)
+extracted_takbon_data.csv: 전체 데이터 정리 (엑셀 호환)
+extracted_takbon_data.json: 전체 데이터 정리 (JSON 형식)
 
-4. 사용 방법
-설정 변경
-config.py 파일에서 다음 항목을 수정할 수 있습니다.
-
-SRC_DIR: 분석할 원본 이미지 폴더
-
-CSV_PATH: 이미지 품질 지표가 담긴 CSV 파일 경로
-
-BAD_INDICATOR_THRESHOLD: 이미지를 제거할 나쁜 지표의 최소 개수 (기본값: 2)
-
-실행
-터미널에서 아래 명령어로 실행합니다.
-
-Bash
-
-cd 1_data/eda/vision
-python quality_analysis.py
-5. 결과 확인
-콘솔: 지표별 통계 및 제거 대상 개수 출력
-
-폴더: 저품질 이미지가 raw_data/low_quality_removed 폴더로 이동됨
+5. 커스텀 설정
+config.py 파일을 수정하여 다음 내용을 변경할 수 있습니다.
+FONT_SIZE_MIN/MAX: 원문 텍스트로 인식할 폰트 크기 범위
+FACE_PATTERNS: "앞면", "뒷면" 등을 인식하는 정규표현식 패턴 
