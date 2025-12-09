@@ -1,122 +1,98 @@
-﻿
-# Epitext Project: 한자 탁본 자동 복원 AI 시스템
+﻿# Epitext Project - Research Repository
 
+한자 탁본 자동 복원 AI 시스템 연구 및 실험 저장소
 
+## 개요
 
-Epitext Project는 고문서(한자 탁본)의 이미지를 분석하여 훼손된 글자를 복원하고, 번역 및 디지털화하는 AI 통합 솔루션입니다.
+이 저장소는 Epitext 프로젝트의 **연구 및 실험 코드**를 포함합니다.
+- 데이터 수집 및 전처리 파이프라인
+- 모델 학습 및 평가 실험
+- 연구 결과 및 문서
 
+## 저장소 구조
 
+    Epitext_Project/
+    ├── 1_data/              # 데이터 처리 파이프라인
+    ├── 2_notebooks/         # Jupyter 실험 노트북
+    ├── 3_model/             # 모델 학습 및 평가
+    ├── 5_docs/              # 연구 문서
+    ├── requirements.txt     # Python 의존성
+    └── README.md
 
-![Project Status](https://img.shields.io/badge/Status-Active-success)
+## 주요 구성 요소
 
-![Python](https://img.shields.io/badge/Python-3.8+-blue)
+### 1_data: 데이터 파이프라인
+- **crawlers**: 한국학중앙연구원 등 웹 크롤링
+- **preprocess**: NLP 및 Vision 전처리
+- **eda**: 탐색적 데이터 분석
 
-![Framework](https://img.shields.io/badge/Framework-PyTorch%20%7C%20FastAPI%20%7C%20React-orange)
+### 3_model: 모델 실험
+- **nlp/sikuroberta**: 한자 MLM 모델 학습 및 평가
+- **nlp/gemini_experiment**: LLM 기반 번역 실험
+- **vision/swin_experiment**: Swin Transformer 기반 이미지 복원
+- **vision/ocr_experiment**: OCR 성능 평가
 
+## 환경 설정
 
+### 요구사항
+- Python 3.8+
+- CUDA 11.8+ (GPU 학습 시)
+- 최소 32GB RAM (대용량 데이터 처리 시)
 
----
-
-
-
-## 프로젝트 구성 (Project Structure)
-
-
-
-이 저장소는 데이터 수집부터 모델링, 서비스 배포까지 전체 파이프라인을 포함합니다.
-
-
-
-| 모듈 | 경로 | 설명 | 상태 |
-
-| :--- | :--- | :--- | :---: |
-
-| **Data Pipeline** | [`1_data/`](./1_data) | 크롤링, PDF 파싱, 전처리(NLP/Vision), EDA | 완료 |
-
-| **Notebooks** | `2_notebooks/` | 실험 및 프로토타이핑용 Jupyter Notebook | 진행중 |
-
-| **AI Models** | [`3_model/`](./3_model) | Swin Transformer(OCR), Gemini(번역) 학습 및 검증 | 완료 |
-
-| **Backend** | `backend/` | 모델 서빙 API (FastAPI) 및 데이터베이스 연동 | 통합됨 |
-
-| **Frontend** | `frontend/` | 사용자 인터페이스 (React) | 통합됨 |
-
-
-
----
-
-
-
-## 시작하기 (Getting Started)
-
-
-
-각 모듈은 독립적으로 실행 가능하도록 설계되었습니다. 상세한 실행 방법은 각 폴더 내부의 README.md를 참고하세요.
-
-
-
-### 1. 데이터 파이프라인 (Data)
-
-데이터 수집 및 전처리를 수행합니다.
-
+### 설치
 ```bash
+# 저장소 복제
+git clone https://github.com/rntqkdl/Epitext_Project.git
+cd Epitext_Project
 
-cd 1_data
+# 가상환경 생성
+conda create -n epitext python=3.10
+conda activate epitext
 
+# 의존성 설치
 pip install -r requirements.txt
+실행 가이드
+1. 데이터 수집
+bash
+cd 1_data/crawlers
+python main.py
+2. 데이터 전처리
+bash
+# NLP 전처리
+cd 1_data/preprocess/nlp
+python text_clean.py
 
-python config.py  # 디렉토리 초기화
+# Vision 전처리
+cd ../vision
+python easyocr_filter.py
+3. 모델 학습
+bash
+# SikuRoBERTa 학습
+cd 3_model/nlp/sikuroberta/train
+python train_task.py
 
-2. 모델 학습 및 검증 (Model)
+# Swin Transformer 학습
+cd ../../../vision/swin_experiment/train
+python train_task.py
+4. 모델 평가
+bash
+# SikuRoBERTa 평가
+cd 3_model/nlp/sikuroberta/evaluation
+python evaluate_task.py
+연관 저장소
+Epitext_Service: 프로덕션 서비스 코드 (backend/frontend)
 
-Swin Transformer 모델을 학습하거나 성능을 평가합니다.
+모델 공유
+학습된 모델은 다음 방법으로 서비스 저장소와 공유됩니다:
 
+Git LFS (소규모 모델)
 
+클라우드 스토리지 (대규모 모델)
 
-Bash
+모델 레지스트리 (버전 관리)
 
+라이센스
+이 프로젝트는 연구 목적으로 사용됩니다.
 
-
-# Vision (OCR)cd 3_model/vision/swin_experiment
-
-python train.py      # 학습
-
-python evaluation/evaluate.py  # 검증
-
-3. 전체 시스템 실행 (Web Service)
-
-백엔드와 프론트엔드를 구동합니다.
-
-
-
-Bash
-
-
-
-# Backendcd backend
-
-python main.py# Frontendcd frontend
-
-npm install
-
-npm start
-
-시스템 아키텍처
-
-수집 (Crawler/PDF): 규장각, 국사편찬위 등에서 이미지/텍스트 수집
-
-전처리 (Preprocess): EasyOCR 필터링 및 텍스트 노이즈 제거
-
-인식 (OCR): Swin Transformer V2 기반 한자 인식
-
-복원/번역 (NLP): LLM (Gemini/RoBERTa) 기반 문맥 복원 및 번역
-
-서비스: React 웹 인터페이스를 통한 검색 및 시각화
-
-라이선스 및 출처
-
-데이터 출처: 서울대학교 규장각, 국사편찬위원회, 국립문화재연구소
-
-개발: 4조 복원왕 김탁본 팀
-
-본 프로젝트는 교육 및 연구 목적으로 개발되었습니다.
+문의
+저장소: https://github.com/rntqkdl/Epitext_Project
