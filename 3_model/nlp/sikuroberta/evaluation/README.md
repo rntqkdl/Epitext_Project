@@ -39,7 +39,7 @@ TEST_DATA_PATH: 테스트 데이터셋 경로
 
 
 
-Bash
+
 
 
 
