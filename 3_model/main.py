@@ -10,9 +10,9 @@ Epitext 모델 파이프라인 메인 엔트리 포인트
 --task 인자를 통해 선택적으로 실행한다.
 
 실행 예시:
-python -m 3_model.main --task sikuroberta_train
-python -m 3_model.main --task swin_restore
-python -m 3_model.main --task siku_post_correct
+    python -m 3_model.main --task sikuroberta_train
+    python -m 3_model.main --task swin_restore
+    python -m 3_model.main --task siku_post_correct
 """
 
 import argparse
@@ -23,17 +23,29 @@ import argparse
 # =========================
 
 def run_sikuroberta_train() -> None:
+    """SikuRoBERTa 학습"""
     print("[MODEL] SikuRoBERTa training started")
+
     from .nlp.sikuroberta.train.train_task import train_main
     train_main()
+
     print("[MODEL] SikuRoBERTa training finished")
 
 
 def run_siku_post_correction() -> None:
     """OCR 결과 텍스트 후처리 (구두점 + MASK 복원)"""
     print("[MODEL] SikuRoBERTa post-correction started")
-    from .nlp.sikuroberta.post_correction.siku_post_correction_pipeline import run_pipeline
+
+    # NOTE: 실제 파이프라인 모듈 경로에 맞게 import 되어야 함
+    # 예시 1) 3_model/nlp/sikuroberta/post_correction/siku_post_correction_pipeline.py 인 경우:
+    #   from .nlp.sikuroberta.post_correction.siku_post_correction_pipeline import run_pipeline
+    #
+    # 예시 2) 3_model/saved_models/post_correction/siku_post_correction_pipeline.py 인 경우:
+    #   from .saved_models.post_correction.siku_post_correction_pipeline import run_pipeline
+
+    from .saved_models.post_correction.siku_post_correction_pipeline import run_pipeline
     run_pipeline()
+
     print("[MODEL] SikuRoBERTa post-correction finished")
 
 
@@ -42,17 +54,29 @@ def run_siku_post_correction() -> None:
 # =========================
 
 def run_swin_train() -> None:
+    """SwinV2 학습"""
     print("[MODEL] SwinV2 training started")
+
     from .vision.swin_experiment.train import main as swin_train_main
     swin_train_main()
+
     print("[MODEL] SwinV2 training finished")
 
 
 def run_swin_restore() -> None:
     """MASK2 이미지 복원 추론"""
     print("[MODEL] Swin Mask Restoration started")
-    from .vision.swin_experiment.inference.swin_mask_restore_pipeline import run_pipeline
+
+    # 마찬가지로 실제 파일 위치에 맞게 import
+    # 예시 1) 3_model/vision/swin_experiment/inference/swin_mask_restore_pipeline.py:
+    #   from .vision.swin_experiment.inference.swin_mask_restore_pipeline import run_pipeline
+    #
+    # 예시 2) 3_model/saved_models/inference/swin_mask_restore_pipeline.py:
+    #   from .saved_models.inference.swin_mask_restore_pipeline import run_pipeline
+
+    from .saved_models.inference.swin_mask_restore_pipeline import run_pipeline
     run_pipeline()
+
     print("[MODEL] Swin Mask Restoration finished")
 
 
@@ -61,9 +85,12 @@ def run_swin_restore() -> None:
 # =========================
 
 def run_ocr_eval() -> None:
+    """OCR 평가"""
     print("[MODEL] OCR evaluation started")
+
     from .vision.ocr_experiment.evaluate import main as ocr_eval_main
     ocr_eval_main()
+
     print("[MODEL] OCR evaluation finished")
 
 
@@ -72,9 +99,12 @@ def run_ocr_eval() -> None:
 # =========================
 
 def run_gemini_eval() -> None:
+    """Gemini 번역 / 평가"""
     print("[MODEL] Gemini evaluation started")
+
     from .nlp.gemini_experiment.eval_task import eval_main
     eval_main()
+
     print("[MODEL] Gemini evaluation finished")
 
 
@@ -82,7 +112,7 @@ def run_gemini_eval() -> None:
 # CLI
 # =========================
 
-def parse_args():
+def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser("Epitext Model Pipeline")
     parser.add_argument(
         "--task",
@@ -95,11 +125,12 @@ def parse_args():
             "ocr_eval",
             "gemini_eval",
         ],
+        help="실행할 모델 task 이름",
     )
     return parser.parse_args()
 
 
-def main():
+def main() -> None:
     args = parse_args()
 
     if args.task == "sikuroberta_train":
