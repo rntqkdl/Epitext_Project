@@ -1,0 +1,74 @@
+{
+  "module_info": {
+    "name": "preprocessor",
+    "version": "1.0.0",
+    "description": "탁본 이미지 전처리 모듈",
+    "status": "Production Ready",
+    "created": "2025-12-10"
+  },
+  "preprocessing_pipeline": {
+    "enabled_steps": [
+      "denoise",
+      "enhance_contrast",
+      "binarize",
+      "morphological_operations"
+    ],
+    "description": "1단계: 노이즈 제거, 2단계: 대비 향상, 3단계: 이진화, 4단계: 형태학적 연산 순서대로 실행됩니다."
+  },
+  "denoise_config": {
+    "method": "bilateral",
+    "bilateral_d": 9,
+    "bilateral_sigma_color": 75,
+    "bilateral_sigma_space": 75
+  },
+  "contrast_enhancement": {
+    "method": "clahe",
+    "clahe_clip_limit": 2.0,
+    "clahe_tile_grid_size": [
+      8,
+      8
+    ]
+  },
+  "binarization": {
+    "method": "otsu",
+    "otsu_offset": 0
+  },
+  "morphological_operations": {
+    "kernel_size": [
+      3,
+      3
+    ],
+    "operations": [
+      {
+        "type": "close",
+        "iterations": 1
+      },
+      {
+        "type": "open",
+        "iterations": 1
+      }
+    ]
+  },
+  "output": {
+    "save_intermediate": false,
+    "intermediate_dir": "./preprocessing_steps/",
+    "output_format": "png"
+  },
+  "advanced": {
+    "enable_background_removal": false,
+    "background_removal_method": "grabcut",
+    "enable_skew_correction": false,
+    "skew_correction_threshold": 0.5,
+    "enable_border_removal": false,
+    "border_margin": 10
+  },
+  "performance": {
+    "resize_before_processing": false,
+    "target_width": 1024,
+    "use_gpu": false,
+    "max_image_size": [
+      4096,
+      4096
+    ]
+  }
+}
