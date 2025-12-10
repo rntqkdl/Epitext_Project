@@ -6,157 +6,173 @@
 
 ---
 
-## 프로젝트 개요
+## 📂 프로젝트 구조 (Project Structure)
 
-Epitext Project는 다음과 같은 연구 목적을 중심으로 구성되어 있습니다.
-
-- **데이터 파이프라인**: 한자 탁본 데이터 수집 및 전처리 파이프라인 구축
-- **모델 연구**: NLP(SikuRoBERTa, Gemini) 및 Vision(SwinV2, OCR) 모델 실험
-- **실험 관리**: 모델 학습, 평가, 분석 및 실험 기록 관리
-- **아카이빙**: 연구 과정에서 발생하는 시행착오 및 중간 결과 정리
-
-본 저장소는 **재현 가능한(Reproducible) 연구 실험 환경 제공**을 목표로 합니다.
-
----
-
-## 프로젝트 구조
+이 저장소는 데이터 파이프라인부터 모델 학습, 실험 기록까지 체계적으로 구성되어 있습니다.
 
 ```text
 Epitext_Project/
-├── 1_data/                 # 데이터 파이프라인
-│   ├── __init__.py
-│   ├── config.py           # 데이터 실행 설정
-│   ├── main.py             # 데이터 파이프라인 진입점
-│   ├── README.md
-│   ├── crawlers/           # 데이터 수집 (Selenium, Requests)
-│   ├── preprocess/         # 데이터 전처리 (NLP, Vision)
-│   ├── eda/                # 탐색적 데이터 분석
-│   ├── utils/              # 공통 유틸리티
-│   └── sample_data/        # 소규모 샘플 데이터 (Git 포함)
+├── 1_data/                 # 데이터 파이프라인 (수집, 전처리, EDA)
+│   ├── raw_data/           # (Git 제외) 원본 데이터 저장소 (.gitignore 적용)
+│   ├── preprocess/         # Vision(EasyOCR) 및 NLP(Text Clean) 전처리 모듈
+│   ├── crawlers/           # 데이터 수집 크롤러
+│   └── eda/                # 데이터 분석 스크립트
 │
-├── 2_notebooks/            # Jupyter 노트북 (EDA / 프로토타이핑)
+├── 2_notebooks/            # 실험 및 프로토타이핑용 Jupyter Notebook
 │
-├── 3_model/                # 모델 학습 및 평가
-│   ├── __init__.py
-│   ├── config.py           # 모델 공통 설정
-│   ├── main.py             # 모델 파이프라인 진입점
-│   ├── README.md
-│   ├── nlp/
+├── 3_model/                # 모델 학습 및 평가 파이프라인
+│   ├── nlp/                # NLP 모델 (SikuRoBERTa, Gemini)
 │   │   ├── sikuroberta/    # MLM 학습 및 평가
-│   │   └── gemini_experiment/ # 번역 및 생성 실험
-│   ├── vision/
-│   │   ├── swin_experiment/   # 이미지 복원 실험
-│   │   └── ocr_experiment/    # 문자 인식 실험
-│   └── saved_models/       # 학습된 모델 저장 (Git 제외)
+│   │   └── gemini_experiment/ # 번역 실험
+│   ├── vision/             # Vision 모델 (Swin Transformer, OCR)
+│   │   ├── swin_experiment/   # 이미지 복원 학습
+│   │   └── ocr_experiment/    # OCR 성능 평가
+│   └── saved_models/       # (Git 제외) 학습된 모델 가중치 저장소
 │
-├── experiments/            # 실험 설정(YAML) 및 로그 (권장)
+├── 5_docs/                 # 연구 노트 및 과거 시행착오 기록 (Experiments Archive)
 │
-├── 5_docs/                 # 연구 문서, 리포트, 시행착오 기록
-│
-├── main.py                 # 통합 실행 진입점 (Single Entry Point)
-├── requirements.txt        # 의존성 패키지 목록
-├── README.md
-└── test.py
+├── main.py                 # ✨ 통합 실행 컨트롤러 (Entry Point)
+├── config.py               # (Optional) 프로젝트 전역 설정
+├── requirements.txt        # 통합 의존성 패키지 목록
+└── .env                    # (Git 제외) API Key 및 환경 변수 설정 파일
 ```
 
-⚠️ 본 프로젝트에서 사용되는 대규모 학습 및 평가 데이터는 용량 문제로 인해 Git 저장소에 포함되어 있지 않습니다.
+---
 
-모든 실제 데이터는 Google Drive에 저장되며, 로컬 환경에 직접 다운로드하여 아래 구조에 맞게 배치해야 합니다.
+## 🚀 시작하기 (Getting Started)
 
-📁 Google Drive 데이터 링크: (연구실 공유 드라이브 링크)
-1_data/
-├── raw_data/
-│ ├── doc_id_transcript_dataset.csv
-│ ├── doc_id_transcript_dataset_processed.csv
-│ ├── pun_ksm_gsko.csv
-│ ├── processed_dataset/ # SikuRoBERTa 학습 데이터
-│ └── split_dataset/ # Train/Val/Test Split
-│ └── tokenized_sikuroberta_simple_128_split/
-│ ├── train/
-│ ├── validation/
-│ └── test/
-│
-├── processed/
-│ └── swin_data/ # SwinV2 입력용 데이터 (.npz)
-Note: 1_data/raw_data/ 및 1_data/processed/ 하위의 대용량 파일은 .gitignore에 의해 추적되지 않습니다.
-빠른 시작 (Quick Start)
+### 1\. 환경 설정 및 의존성 설치
 
-1. 환경 설정
+Python 3.9 이상 환경에서 실행하는 것을 권장합니다.
 
-# 저장소 클론
-
+```bash
+# 1. 저장소 클론
 git clone [https://github.com/rntqkdl/Epitext_Project.git](https://github.com/rntqkdl/Epitext_Project.git)
 cd Epitext_Project
 
-# Conda 가상환경 생성 (Python 3.10 권장)
-
+# 2. 가상환경 생성 (Conda 권장)
 conda create -n epitext python=3.10
 conda activate epitext
 
-# 의존성 패키지 설치
-
+# 3. 통합 의존성 설치 (필수)
+# NLP, Vision, Crawling 관련 라이브러리가 모두 포함되어 있습니다.
 pip install -r requirements.txt
-⚠️ 본 프로젝트는 torch, transformers 등 주요 패키지 버전에 민감하므로 requirements.txt에 명시된 버전을 사용하는 것을 권장합니다.
+```
 
-2. 실행 방법
-   프로젝트 루트의 main.py를 통해 모든 파이프라인을 제어할 수 있습니다.
-   python main.py --phase all
+### 2\. API 키 발급 및 설정 (상세 가이드)
 
-데이터 파이프라인 실행
+본 프로젝트는 \*\*Gemini(번역)\*\*와 \*\*Google Cloud Vision(OCR)\*\*을 사용하므로 두 가지 키가 필요합니다.
 
-# 전체 데이터 프로세스 실행
+#### **A. Google Gemini API Key 발급**
 
-python main.py --phase data --step all
+1.  [Google AI Studio](https://aistudio.google.com/app/apikey)에 접속하여 Google 계정으로 로그인합니다.
+2.  좌측 상단의 **"Get API key"** 버튼을 클릭합니다.
+3.  \*\*"Create API key in new project"\*\*를 클릭하여 키를 생성합니다.
+4.  생성된 `AIza...`로 시작하는 키 문자열을 복사합니다.
 
-# 개별 단계 실행
+#### **B. Google Cloud Vision API 키 (Service Account) 발급**
 
-python main.py --phase data --step crawl # 데이터 수집
-python main.py --phase data --step preprocess # 전처리
-python main.py --phase data --step eda # EDA 수행
+1.  [Google Cloud Console](https://console.cloud.google.com/)에 접속하여 새 프로젝트를 생성합니다.
+2.  상단 검색창에 \*\*"Cloud Vision API"\*\*를 검색하고 **"사용(Enable)"** 버튼을 누릅니다.
+3.  좌측 메뉴에서 \*\*[IAM 및 관리자] \> [서비스 계정]\*\*으로 이동합니다.
+4.  \*\*"+ 서비스 계정 만들기"\*\*를 클릭하고 이름을 입력한 후 완료합니다.
+5.  생성된 계정을 클릭하고 **[키(Keys)]** 탭으로 이동합니다.
+6.  \*\*[키 추가] \> [새 키 만들기]\*\*를 클릭하고 유형을 **JSON**으로 선택하여 다운로드합니다.
+7.  다운로드된 JSON 파일(예: `project-12345.json`)을 프로젝트 루트 폴더에 복사합니다.
 
-모델 파이프라인 실행
+#### **C. 환경 변수 파일(.env) 생성**
 
-# SikuRoBERTa 학습
+프로젝트 루트(`Epitext_Project/`)에 `.env` 파일을 생성하고 위에서 얻은 정보를 입력합니다.
 
+**`.env` 파일 작성 예시:**
+
+```env
+# A. Gemini API Key (문자열 붙여넣기)
+GOOGLE_API_KEY=AIzaSyD_Your_Gemini_Key_Here
+
+# B. Google Cloud Vision JSON 파일 경로 (상대 경로)
+GOOGLE_APPLICATION_CREDENTIALS=./your-project-key-12345.json
+```
+
+---
+
+## 💻 실행 방법 (Usage)
+
+프로젝트 루트의 \*\*`main.py`\*\*를 통해 데이터 전처리부터 모델 학습까지 **모든 파이프라인을 단일 명령어로 실행**할 수 있습니다.
+
+### 1\. 데이터 파이프라인 (Data Pipeline)
+
+데이터 전처리 및 분석을 수행합니다.
+
+| 작업 단계       | 명령어                                          | 설명                                                                       |
+| :-------------- | :---------------------------------------------- | :------------------------------------------------------------------------- |
+| **전처리 통합** | `python main.py --phase data --step preprocess` | Vision(EasyOCR 필터링) 및 NLP(텍스트 정제) 전처리를 순차적으로 실행합니다. |
+| **EDA**         | `python main.py --phase data --step eda`        | 데이터 통계 및 시각화 분석을 수행합니다.                                   |
+
+### 2\. 모델 파이프라인 (Model Pipeline)
+
+모델 학습 및 성능 평가를 수행합니다. `--task` 인자로 구체적인 작업을 지정합니다.
+
+#### A. SikuRoBERTa (NLP - 한자 언어 모델)
+
+```bash
+# MLM 학습 (Fine-tuning)
 python main.py --phase model --task sikuroberta_train
 
-# 모든 모델 평가
+# 성능 평가 (Perplexity, Accuracy)
+python main.py --phase model --task sikuroberta_eval
+```
 
-python main.py --phase model --task all_eval
+#### B. Swin Transformer (Vision - 이미지 복원)
 
-# SikuRoBERTa 학습
+```bash
+# 학습 (Training)
+python main.py --phase model --task swin_train
 
-python main.py --phase model --task sikuroberta_train
+# 평가 (Evaluation)
+python main.py --phase model --task swin_eval
+```
 
-# 모든 모델 평가
+#### C. Gemini (NLP - 번역 실험)
 
-python main.py --phase model --task all_eval
+```bash
+# 번역 및 정량 평가 (BLEU/BERTScore)
+python main.py --phase model --task gemini_eval
+```
 
-실험 대상 모델
+---
 
-NLP 모델
+## ⚙️ 설정 변경 (Configuration)
 
-모델 설명 비고
-SikuRoBERTa 한자 기반 언어 모델 (Masked Language Modeling) 메인 복원 모델
-Gemini 멀티모달 기반 LLM 보조 실험 번역 및 문맥 보정
+각 모듈의 하이퍼파라미터(Epoch, Batch Size, Learning Rate 등) 및 데이터 경로는 \*\*해당 모듈 내부의 `config.py`\*\*에서 관리합니다.
 
-Vision 모델
+| 모듈                 | 설정 파일 경로                                 | 주요 설정 항목                            |
+| :------------------- | :--------------------------------------------- | :---------------------------------------- |
+| **SikuRoBERTa 학습** | `3_model/nlp/sikuroberta/train/config.py`      | Epochs, Batch Size, LR, Data Path         |
+| **SikuRoBERTa 평가** | `3_model/nlp/sikuroberta/evaluation/config.py` | Model Path, Test Data Path                |
+| **Swin 학습/평가**   | `3_model/vision/swin_experiment/config.py`     | Image Size, Augmentation, Checkpoint Path |
+| **OCR 평가**         | `3_model/vision/ocr_experiment/config.py`      | GT/Pred Path                              |
+| **Gemini 실험**      | `3_model/nlp/gemini_experiment/config.py`      | Model Version, Prompt Path                |
 
-모델 설명 비고
-SwinV2 탁본 이미지 결측 복원 및 노이즈 제거 이미지 복원
-OCR 한자 문자 인식 및 위치 탐지 텍스트 추출
+---
 
-재현성 (Reproducibility)
-모든 실험은 고정된 RANDOM_SEED 기반으로 실행됩니다.
+## 🧪 실험 기록 및 아카이브 (Archived Experiments)
 
-동일한 데이터 및 설정을 사용할 경우 결과 재현을 보장합니다.
+과거의 시행착오 코드와 다양한 실험 기록은 **`5_docs/experiments/`** 폴더에 분류되어 보존되어 있습니다.
 
-실험 설정(config) 및 실행 로그는 experiments/ 디렉터리에 기록 및 관리됩니다.
+- **NLP Trials**: ExaOne, Qwen 번역 실험, 다양한 SikuRoBERTa 학습 조건 테스트
+- **Vision Trials**: DeepSeek, Paddle, AIHub 등 다양한 OCR 모델 비교 실험, OpenCV 전처리 시행착오
 
-라이선스
-MIT License
+---
 
-연락처
-GitHub: @rntqkdl
+## 📝 라이선스 및 출처
 
-Team: 4조 복원왕 김탁본
+- **License**: MIT License
+- **Data Source**: 서울대학교 규장각, 국사편찬위원회, 국립문화재연구소
+- **Team**: 4조 복원왕 김탁본
+
+<!-- end list -->
+
+```
+
+```
