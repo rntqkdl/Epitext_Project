@@ -1,9 +1,9 @@
-# -*- coding: utf-8 -*-
-"""3_model 패키지 초기화 모듈.
+from pathlib import Path
 
-이 파일은 `3_model` 디렉터리를 파이썬 패키지처럼 인식시키기 위한 초기화 스크립트입니다. 
-`1_data`와 마찬가지로 디렉터리명이 숫자로 시작하므로 일반적인 패키지 import 방식보다는 importlib을 이용한 동적 로딩 방식을 권장합니다.
+# 프로젝트 루트 경로
+ROOT_DIR = Path(__file__).resolve().parents[1]
 
-프로젝트 루트의 main.py에서 모델 학습/평가 스크립트를 파일 경로로 불러와 실행할 때, 
-이 디렉터리가 파이썬 코드 모음이라는 점을 도구와 린터에게 알려주는 역할도 합니다.
-"""
+MODEL_DIR = ROOT_DIR / "3_model"
+SAVED_MODELS_DIR = MODEL_DIR / "saved_models"
+
+__all__ = ["ROOT_DIR", "MODEL_DIR", "SAVED_MODELS_DIR"]

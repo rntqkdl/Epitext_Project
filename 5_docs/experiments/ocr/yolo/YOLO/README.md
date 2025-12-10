@@ -1,7 +1,0 @@
-# YOLO
-
-## 
-- YOLO      
-
-##  
-- Ultralytics YOLO        .

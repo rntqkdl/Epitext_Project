@@ -1,7 +1,0 @@
-# Qwen   
-
-## 
-- Qwen       
-
-##  
--       BLEU   

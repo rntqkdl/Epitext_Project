@@ -1,7 +1,0 @@
-# briefnet   
-
-## 
-- BiRefNet       
-
-##  
--          
