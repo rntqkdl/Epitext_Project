@@ -1,229 +1,162 @@
-# Epitext Project – 연구 및 실험 저장소
+# Epitext Project – Research & Experiment Repository
 
-한자 탁본 자동 복원 AI 시스템 연구 및 실험 저장소입니다.
+본 저장소는 **한자 탁본 자동 복원 AI 시스템**을 연구·실험하기 위한 **연구 전용 코드 및 실험 관리 저장소**입니다.
 
-## 개요
+서비스 운영을 위한 백엔드/프론트엔드 코드는 별도 저장소 [`rntqkdl/Epitext_Service`]에서 관리합니다.
 
-이 저장소는 **연구 및 실험 코드**를 포함하며, 다음과 같은 업무를 수행하는 데 사용됩니다:
+---
 
-- 데이터 수집 및 전처리 파이프라인 구축
-- NLP/비전 모델 학습 및 평가 실험
-- 연구 결과 및 문서 관리
+## 프로젝트 개요
 
-서비스용 백엔드/프론트엔드 코드는 별도 저장소(`rntqkdl/Epitext_Service`)에서 관리합니다.
+Epitext Project는 다음과 같은 연구 목적을 중심으로 구성되어 있습니다.
+
+- **데이터 파이프라인**: 한자 탁본 데이터 수집 및 전처리 파이프라인 구축
+- **모델 연구**: NLP(SikuRoBERTa, Gemini) 및 Vision(SwinV2, OCR) 모델 실험
+- **실험 관리**: 모델 학습, 평가, 분석 및 실험 기록 관리
+- **아카이빙**: 연구 과정에서 발생하는 시행착오 및 중간 결과 정리
+
+본 저장소는 **재현 가능한(Reproducible) 연구 실험 환경 제공**을 목표로 합니다.
+
+---
 
 ## 프로젝트 구조
 
-```
+```text
 Epitext_Project/
 ├── 1_data/                 # 데이터 파이프라인
-│   ├── __init__.py        # 경로 설정
-│   ├── config.py          # 실행 설정
-│   ├── main.py            # 오케스트레이터
-│   ├── README.md          # 상세 설명서
-│   ├── crawlers/          # 데이터 크롤러
-│   ├── preprocess/        # 데이터 전처리
-│   ├── eda/               # 탐색적 데이터 분석
-│   ├── utils/             # 공통 유틸리티
-│   └── sample_data/       # 샘플 데이터
+│   ├── __init__.py
+│   ├── config.py           # 데이터 실행 설정
+│   ├── main.py             # 데이터 파이프라인 진입점
+│   ├── README.md
+│   ├── crawlers/           # 데이터 수집 (Selenium, Requests)
+│   ├── preprocess/         # 데이터 전처리 (NLP, Vision)
+│   ├── eda/                # 탐색적 데이터 분석
+│   ├── utils/              # 공통 유틸리티
+│   └── sample_data/        # 소규모 샘플 데이터 (Git 포함)
 │
-├── 2_notebooks/           # Jupyter 노트북 (EDA, 실험)
+├── 2_notebooks/            # Jupyter 노트북 (EDA / 프로토타이핑)
 │
-├── 3_model/               # 모델 학습/평가
-│   ├── __init__.py        # 경로 설정
-│   ├── config.py          # 모델 설정
-│   ├── main.py            # 오케스트레이터
-│   ├── README.md          # 상세 설명서
-│   ├── nlp/               # NLP 모델
-│   │   ├── sikuroberta/   # SikuRoBERTa 실험
-│   │   └── gemini_experiment/  # Gemini 실험
-│   ├── vision/            # Vision 모델
-│   │   ├── swin_experiment/    # SwinV2 실험
-│   │   └── ocr_experiment/     # OCR 실험
-│   └── saved_models/      # 학습된 모델 저장
+├── 3_model/                # 모델 학습 및 평가
+│   ├── __init__.py
+│   ├── config.py           # 모델 공통 설정
+│   ├── main.py             # 모델 파이프라인 진입점
+│   ├── README.md
+│   ├── nlp/
+│   │   ├── sikuroberta/    # MLM 학습 및 평가
+│   │   └── gemini_experiment/ # 번역 및 생성 실험
+│   ├── vision/
+│   │   ├── swin_experiment/   # 이미지 복원 실험
+│   │   └── ocr_experiment/    # 문자 인식 실험
+│   └── saved_models/       # 학습된 모델 저장 (Git 제외)
 │
-├── 5_docs/                # 문서 및 리포트
+├── experiments/            # 실험 설정(YAML) 및 로그 (권장)
 │
-├── main.py                # 통합 실행 진입점
-├── requirements.txt       # Python 의존성
-├── README.md              # 이 파일
-└── test.py                # 테스트 스크립트
+├── 5_docs/                 # 연구 문서, 리포트, 시행착오 기록
+│
+├── main.py                 # 통합 실행 진입점 (Single Entry Point)
+├── requirements.txt        # 의존성 패키지 목록
+├── README.md
+└── test.py
 ```
 
-## 빠른 시작
+⚠️ 본 프로젝트에서 사용되는 대규모 학습 및 평가 데이터는 용량 문제로 인해 Git 저장소에 포함되어 있지 않습니다.
 
-### 설치
+모든 실제 데이터는 Google Drive에 저장되며, 로컬 환경에 직접 다운로드하여 아래 구조에 맞게 배치해야 합니다.
 
-```bash
-# 저장소 복제
-git clone https://github.com/rntqkdl/Epitext_Project.git
+📁 Google Drive 데이터 링크: (연구실 공유 드라이브 링크)
+1_data/
+├── raw_data/
+│ ├── doc_id_transcript_dataset.csv
+│ ├── doc_id_transcript_dataset_processed.csv
+│ ├── pun_ksm_gsko.csv
+│ ├── processed_dataset/ # SikuRoBERTa 학습 데이터
+│ └── split_dataset/ # Train/Val/Test Split
+│ └── tokenized_sikuroberta_simple_128_split/
+│ ├── train/
+│ ├── validation/
+│ └── test/
+│
+├── processed/
+│ └── swin_data/ # SwinV2 입력용 데이터 (.npz)
+Note: 1_data/raw_data/ 및 1_data/processed/ 하위의 대용량 파일은 .gitignore에 의해 추적되지 않습니다.
+빠른 시작 (Quick Start)
+
+1. 환경 설정
+
+# 저장소 클론
+
+git clone [https://github.com/rntqkdl/Epitext_Project.git](https://github.com/rntqkdl/Epitext_Project.git)
 cd Epitext_Project
 
-# 가상환경 생성 및 활성화
+# Conda 가상환경 생성 (Python 3.10 권장)
+
 conda create -n epitext python=3.10
 conda activate epitext
 
-# 의존성 설치
+# 의존성 패키지 설치
+
 pip install -r requirements.txt
-```
+⚠️ 본 프로젝트는 torch, transformers 등 주요 패키지 버전에 민감하므로 requirements.txt에 명시된 버전을 사용하는 것을 권장합니다.
 
-## 실행 방법
+2. 실행 방법
+   프로젝트 루트의 main.py를 통해 모든 파이프라인을 제어할 수 있습니다.
+   python main.py --phase all
 
-### 방법 1: 통합 진입점 (권장)
+데이터 파이프라인 실행
 
-`main.py`를 사용하면 데이터와 모델을 한 번에 제어할 수 있습니다.
+# 전체 데이터 프로세스 실행
 
-#### 전체 파이프라인
-
-```bash
-# 데이터 처리 + 모든 모델 학습
-python main.py --phase all --task all_train
-```
-
-#### 데이터만 처리
-
-```bash
 python main.py --phase data --step all
-python main.py --phase data --step crawl
-python main.py --phase data --step preprocess
-python main.py --phase data --step eda
-```
 
-#### 모델만 실행
+# 개별 단계 실행
 
-```bash
-python main.py --phase model --task sikuroberta_train
-python main.py --phase model --task all_eval
-```
+python main.py --phase data --step crawl # 데이터 수집
+python main.py --phase data --step preprocess # 전처리
+python main.py --phase data --step eda # EDA 수행
 
-### 방법 2: 모듈별 직접 실행
+모델 파이프라인 실행
 
-더 세밀한 제어가 필요하면 각 모듈의 `main.py`를 직접 실행합니다.
-
-#### 데이터 파이프라인 (1_data/main.py)
-
-```bash
-# 전체 데이터 처리
-python 1_data/main.py --step all
-
-# 크롤링만
-python 1_data/main.py --step crawl
-
-# 전처리만
-python 1_data/main.py --step preprocess
-
-# EDA만
-python 1_data/main.py --step eda
-```
-
-자세한 내용: [1_data/README.md](./1_data/README.md)
-
-#### 모델 파이프라인 (3_model/main.py)
-
-```bash
 # SikuRoBERTa 학습
-python 3_model/main.py --task sikuroberta_train
 
-# SwinV2 학습
-python 3_model/main.py --task swin_train
-
-# 모든 모델 학습
-python 3_model/main.py --task all_train
+python main.py --phase model --task sikuroberta_train
 
 # 모든 모델 평가
-python 3_model/main.py --task all_eval
-```
 
-자세한 내용: [3_model/README.md](./3_model/README.md)
+python main.py --phase model --task all_eval
 
-## 실행 옵션
+# SikuRoBERTa 학습
 
-### 공통 옵션
+python main.py --phase model --task sikuroberta_train
 
-```bash
--v, --verbose     상세 로그 출력
--h, --help        도움말 표시
-```
+# 모든 모델 평가
 
-### main.py 옵션
+python main.py --phase model --task all_eval
 
-```bash
---phase {data|model|all}              실행 단계 (기본값: all)
---step {crawl|preprocess|eda|all}    데이터 단계 (phase=data일 때, 기본값: all)
---task {TASK_NAME}                    모델 작업 (phase=model일 때, 기본값: sikuroberta_train)
-```
+실험 대상 모델
 
-## 모델 목록
+NLP 모델
 
-### NLP 모델
+모델 설명 비고
+SikuRoBERTa 한자 기반 언어 모델 (Masked Language Modeling) 메인 복원 모델
+Gemini 멀티모달 기반 LLM 보조 실험 번역 및 문맥 보정
 
-| 모델 | 설명 | 경로 | 실행 명령어 |
-|------|------|------|----------|
-| SikuRoBERTa | 한자 인식 | `3_model/nlp/sikuroberta/` | `python 3_model/main.py --task sikuroberta_train` |
-| Gemini | 멀티모달 평가 | `3_model/nlp/gemini_experiment/` | `python 3_model/main.py --task gemini_eval` |
+Vision 모델
 
-### Vision 모델
+모델 설명 비고
+SwinV2 탁본 이미지 결측 복원 및 노이즈 제거 이미지 복원
+OCR 한자 문자 인식 및 위치 탐지 텍스트 추출
 
-| 모델 | 설명 | 경로 | 실행 명령어 |
-|------|------|------|----------|
-| SwinV2 | 이미지 복원 | `3_model/vision/swin_experiment/` | `python 3_model/main.py --task swin_train` |
-| OCR | 문자 인식 | `3_model/vision/ocr_experiment/` | `python 3_model/main.py --task ocr_eval` |
+재현성 (Reproducibility)
+모든 실험은 고정된 RANDOM_SEED 기반으로 실행됩니다.
 
-## 설정 파일
+동일한 데이터 및 설정을 사용할 경우 결과 재현을 보장합니다.
 
-### 1_data/config.py
+실험 설정(config) 및 실행 로그는 experiments/ 디렉터리에 기록 및 관리됩니다.
 
-데이터 파이프라인 제어:
-
-```python
-RUN_CRAWL = True          # 크롤링 실행 여부
-RUN_PREPROCESS = True     # 전처리 실행 여부
-RUN_EDA = True            # EDA 실행 여부
-```
-
-### 3_model/config.py
-
-모델 학습/평가 제어:
-
-```python
-RANDOM_SEED = 42          # 재현성 보장
-DEVICE = "cuda"           # "cuda" 또는 "cpu"
-```
-
-## 개발 가이드
-
-### 새 모델 추가
-
-1. `3_model/nlp/` 또는 `3_model/vision/` 아래 새 폴더 생성
-2. `train/main.py`와 `evaluation/main.py` 작성
-3. `3_model/main.py`에 실행 함수와 task 추가
-
-### 새 전처리 파이프라인 추가
-
-1. `1_data/preprocess/` 아래 새 모듈 생성
-2. `main()` 함수 구현
-3. `1_data/main.py`의 `run_preprocess()`에 호출 추가
-
-## 주요 의존성
-
-- **PyTorch**: `torch`, `torchvision`
-- **NLP**: `transformers`, `tokenizers`
-- **Vision**: `opencv-python`, `torchvision`
-- **Data**: `pandas`, `numpy`
-- **Visualization**: `matplotlib`, `seaborn`
-
-자세한 내용: [requirements.txt](./requirements.txt)
-
-## 참고 사항
-
-- 모든 모델은 `3_model/saved_models/`에 저장됩니다.
-- 처리된 데이터는 `1_data/processed/`에 저장됩니다.
-- 각 모듈의 상세 문서는 해당 폴더의 README.md를 참고하세요.
-
-## 라이센스
-
+라이선스
 MIT License
 
-## 연락처
+연락처
+GitHub: @rntqkdl
 
-- GitHub: [@rntqkdl](https://github.com/rntqkdl)
+Team: 4조 복원왕 김탁본
