@@ -4,7 +4,8 @@
 **연구 전용 코드 및 실험 관리 저장소**입니다.
 
 서비스 운영을 위한 백엔드/프론트엔드 코드는
-별도 저장소 [`rntqkdl/Epitext_Service`](https://github.com/rntqkdl/Epitext_Service)에서 관리합니다.
+백엔드 저장소 [`jae2022/Epitext_Back`](https://github.com/jae2022/Epitext_Back)
+프론트엔드 저장소 [`jae2022/Epitext_Front`](https://github.com/jae2022/Epitext_Front)
 
 ---
 
