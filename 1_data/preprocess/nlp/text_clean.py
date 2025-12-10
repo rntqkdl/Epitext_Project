@@ -61,9 +61,16 @@ def flatten_text(text):
 
 
 # ======================================================================
-# 메인 실행 함수
+# 메인 실행 함수 (Controller 호출용)
 # ======================================================================
-def main():
+def clean_corpus():
+    """
+    main.py에서 호출되는 NLP 전처리 진입점
+    """
+    print("\n" + "=" * 60)
+    print(" NLP Text Cleaning Started")
+    print("=" * 60)
+    
     Config.print_config()
     
     # 1. 데이터 로드
@@ -83,10 +90,9 @@ def main():
     # transcript 컬럼이 존재한다고 가정 (없으면 예외 처리 필요)
     target_col = "transcript"
     if target_col not in df.columns:
-        print(f"[Error] Column '{target_col}' not found in CSV.")
-        # 첫 번째 컬럼을 대체제로 사용
+        # 만약 컬럼명이 다르면 여기서 동적으로 찾거나 경고
         target_col = df.columns[0]
-        print(f"[Warning] Using '{target_col}' column instead.")
+        print(f"[Warning] 'transcript' column not found. Using '{target_col}' instead.")
 
     df["preprocess"] = df[target_col].progress_apply(
         lambda x: flatten_text(clean_text_base(x))
@@ -104,18 +110,21 @@ def main():
     print("\n[Sample Data]")
     if not df_filtered.empty:
         sample = df_filtered.iloc[0]
-        # doc_id 컬럼이 있는지 확인 후 출력
-        doc_id = sample["doc_id"] if "doc_id" in sample else "Unknown_ID"
+        doc_id = sample.get("doc_id", "Unknown_ID")
         print(f" ID: {doc_id}")
         print(f" Preprocessed: {sample['preprocess'][:100]}...")
     else:
         print(" No data remaining after filtering.")
 
     # 5. 저장
+    # 출력 디렉토리 생성 (없을 경우)
+    Config.OUTPUT_CSV.parent.mkdir(parents=True, exist_ok=True)
+    
     df_filtered.to_csv(Config.OUTPUT_CSV, index=False, encoding="utf-8-sig")
     print(f"\n[Success] Saved to: {Config.OUTPUT_CSV}")
     print(f" Columns: {list(df_filtered.columns)}")
+    print("=" * 60 + "\n")
 
 
 if __name__ == "__main__":
-    main()
+    clean_corpus()
