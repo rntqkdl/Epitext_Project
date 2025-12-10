@@ -25,5 +25,5 @@ def print_tree(dir_path: Path, prefix: str = ""):
 
 if __name__ == "__main__":
     root = Path(".")
-    print(f"📦 {root.resolve().name}")
+    print(f"Project: {root.resolve().name}")
     print_tree(root)

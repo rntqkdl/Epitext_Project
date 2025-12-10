@@ -23,9 +23,11 @@ result = preprocess_image_unified(
     "output_ocr.png",
     margin=10,
     use_rubbing=False,
+    metadata_json_path="result/preprocess_metadata.json",
 )
 if result["success"]:
     print("출력 경로:", result["swin"]["output_path"], result["ocr"]["output_path"])
+    print("메타데이터:", result["metadata_json"])
 else:
     print("오류:", result["message"])
 ```

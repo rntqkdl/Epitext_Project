@@ -193,6 +193,7 @@ class UnifiedImagePreprocessor:
         output_ocr_path: str,
         margin: Optional[int] = None,
         use_rubbing: bool = False,
+        metadata_json_path: Optional[str] = None,
     ) -> Dict:
         """Swin Gray와 OCR 이미지를 동시에 생성하는 통합 전처리를 수행합니다."""
         margin_val = margin or self.config["margin"]
@@ -239,7 +240,7 @@ class UnifiedImagePreprocessor:
                 raise ValueError("이미지 저장 실패")
             logger.info(f"[SAVE] Swin 저장: {out_swin}")
             logger.info(f"[SAVE] OCR 저장: {out_ocr}")
-            return {
+            summary = {
                 "success": True,
                 "version": "Unified Swin Gray + OCR (v1.0.0)",
                 "original_shape": original_shape,
@@ -247,7 +248,7 @@ class UnifiedImagePreprocessor:
                 "region_type": region_type,
                 "region_detected": detected_bbox is not None,
                 "swin": {
-                    "output_path": str(out_swin).replace("\", "/"),
+                    "output_path": out_swin.as_posix(),
                     "output_shape": swin_output_3ch.shape,
                     "color_type": "Grayscale 3채널 (B=G=R)",
                     "is_inverted": info_swin["is_inverted"],
@@ -256,7 +257,7 @@ class UnifiedImagePreprocessor:
                     "is_bright_bg": info_swin["is_bright_bg"],
                 },
                 "ocr": {
-                    "output_path": str(out_ocr).replace("\", "/"),
+                    "output_path": out_ocr.as_posix(),
                     "output_shape": binary_final.shape,
                     "polarity": info_ocr["polarity"],
                     "mean_brightness_before": info_ocr["mean_brightness_before"],
@@ -265,6 +266,13 @@ class UnifiedImagePreprocessor:
                 },
                 "message": "통합 전처리 완료 (Swin + OCR)",
             }
+            meta_path = Path(metadata_json_path) if metadata_json_path else out_swin.with_name("preprocess_metadata.json")
+            meta_path.parent.mkdir(parents=True, exist_ok=True)
+            with open(meta_path, "w", encoding="utf-8") as f:
+                json.dump(summary, f, ensure_ascii=False, indent=2)
+            summary["metadata_json"] = meta_path.as_posix()
+            logger.info(f"[SAVE] 메타데이터 저장: {meta_path}")
+            return summary
         except Exception as e:
             logger.error(f"[ERROR] 통합 전처리 실패: {e}")
             return {"success": False, "message": str(e)}
@@ -284,6 +292,7 @@ def preprocess_image_unified(
     output_ocr_path: str,
     margin: Optional[int] = None,
     use_rubbing: bool = False,
+    metadata_json_path: Optional[str] = None,
 ) -> Dict:
     """편의 함수: 통합 이미지 전처리를 수행합니다."""
     prep = get_preprocessor()
@@ -293,6 +302,7 @@ def preprocess_image_unified(
         output_ocr_path,
         margin,
         use_rubbing,
+        metadata_json_path,
     )
 
 if __name__ == "__main__":
