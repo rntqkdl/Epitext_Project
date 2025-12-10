@@ -32,6 +32,7 @@ def main() -> None:
     parser.add_argument('--config', '-c', default=None, help='설정 파일 경로')
     parser.add_argument('--margin', '-m', type=int, default=None, help='여백 값')
     parser.add_argument('--use_rubbing', action='store_true', help='탁본 영역 검출 사용 여부')
+    parser.add_argument('--metadata', default=None, help='요약 JSON 저장 경로 (선택)')
     args = parser.parse_args()
 
     if args.config:
@@ -42,6 +43,7 @@ def main() -> None:
             args.output_ocr,
             margin=args.margin,
             use_rubbing=args.use_rubbing,
+            metadata_json_path=args.metadata,
         )
     else:
         result = preprocess_image_unified(
@@ -50,6 +52,7 @@ def main() -> None:
             args.output_ocr,
             margin=args.margin,
             use_rubbing=args.use_rubbing,
+            metadata_json_path=args.metadata,
         )
     print(result)
 
