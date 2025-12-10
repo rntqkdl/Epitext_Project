@@ -70,41 +70,54 @@ pip install -r requirements.txt
 
 ---
 
-## 🔑 API 키 설정 (Gemini · Google Vision)
+## 📁 데이터 다운로드 및 배치 방법 (중요)
 
-본 프로젝트는 다음 외부 API를 사용합니다.
+본 프로젝트에서 사용되는 **대규모 학습 및 평가 데이터는 GitHub에 포함되어 있지 않습니다.**
+용량 문제 및 라이선스 이슈로 인해, 모든 실제 데이터는 **Google Drive를 통해 제공**됩니다.
 
-- **Gemini API**: 번역 및 복원 보조 평가
-- **Google Cloud Vision API**: OCR 성능 평가
+### 🔗 데이터 다운로드 링크
 
-### A. Gemini API Key
+아래 Google Drive 링크에서 전체 데이터를 다운로드하세요.
 
-1. [https://aistudio.google.com/app/apikey](https://aistudio.google.com/app/apikey) 접속
-2. **Get API key → Create API key**
-3. 발급된 `AIza...` 키 복사
+👉 **Google Drive 데이터 폴더**
+[https://drive.google.com/drive/folders/1dqhfSy4_nnQTqXvZ3yqMpgbpR1r0nOkn?usp=drive_link](https://drive.google.com/drive/folders/1dqhfSy4_nnQTqXvZ3yqMpgbpR1r0nOkn?usp=drive_link)
 
-### B. Google Cloud Vision (Service Account)
+---
 
-1. Google Cloud Console에서 프로젝트 생성
-2. **Cloud Vision API 활성화**
-3. 서비스 계정 생성 → JSON 키 다운로드
-4. 프로젝트 루트에 JSON 파일 배치
+### 📂 데이터 배치 방법
 
-### C. `.env` 파일 생성
+다운로드한 데이터는 압축 해제 후,
+반드시 프로젝트 루트 기준으로 아래 구조에 맞게 배치해야 합니다.
 
-```env
-GOOGLE_API_KEY=AIzaSyD_Your_Gemini_Key_Here
-GOOGLE_APPLICATION_CREDENTIALS=./your-project-key-12345.json
+```text
+Epitext_Project/
+└── 1_data/
+    ├── raw_data/
+    │   ├── doc_id_transcript_dataset.csv
+    │   ├── doc_id_transcript_dataset_processed.csv
+    │   ├── pun_ksm_gsko.csv
+    │   ├── processed_dataset/
+    │   └── split_dataset/
+    │       └── tokenized_sikuroberta_simple_128_split/
+    │           ├── train/
+    │           ├── validation/
+    │           └── test/
+    │
+    └── processed/
+        └── swin_data/
+            └── *.npz
 ```
+
+> ⚠️ 주의
+>
+> - `raw_data/`, `processed/` 하위 데이터는 `.gitignore`로 인해 Git에 커밋되지 않습니다.
+> - 경로 구조가 다를 경우 모델 학습/평가가 정상 동작하지 않습니다.
 
 ---
 
 ## 💻 실행 방법 (Usage)
 
 ### ✅ 통합 진입점
-
-프로젝트 루트의 `main.py`는
-**데이터 파이프라인 + 모델 파이프라인을 통합 제어**합니다.
 
 ```bash
 # 데이터 전처리
@@ -117,8 +130,6 @@ python main.py --phase data --step eda
 ---
 
 ### ✅ 모델 파이프라인 (3_model)
-
-모델 관련 작업은 `3_model/main.py`를 **단일 Entry Point**로 사용합니다.
 
 > ❗ `3_model` 디렉토리는 숫자로 시작하므로
 > **반드시 `-m` 옵션을 사용해 실행해야 합니다.**
@@ -145,23 +156,21 @@ python -m 3_model.main --task gemini_eval
 
 - `swin_train`
 
-  - `1_data/processed/swin_data/` 하위에 `.npz` 파일 필요
+  - `1_data/processed/swin_data/` 하위 `.npz` 파일 필요
 
 - `sikuroberta_train`
 
-  - 토큰화된 train/validation 데이터 필요
+  - 토큰화된 train / validation 데이터 필요
 
 - `ocr_eval`
 
-  - GT/Prediction 데이터 경로가 올바르게 설정되어야 함
+  - GT / Prediction 데이터 경로 설정 필요
 
 👉 반드시 **`1_data` 파이프라인 수행 또는 Drive 데이터 배치 후 실행**하세요.
 
 ---
 
 ## ⚙️ 설정 관리 (Configuration)
-
-하이퍼파라미터 및 경로는 **각 모델의 `config.py`**에서 관리합니다.
 
 | 모듈        | 설정 파일                                  |
 | ----------- | ------------------------------------------ |
@@ -198,7 +207,7 @@ python -m 3_model.main --task gemini_eval
 
 ### ✅ 마지막 한 줄 정리
 
-> 이 README는 **“연구 재현·확장·협업”을 고려한 최종 형태**이며,
+> 이 README는 **연구 재현·확장·협업을 고려한 최종 형태**이며,
 > 이후 모델이 추가되더라도 `3_model/main.py`에 task만 등록하면
 > 동일한 방식으로 확장할 수 있습니다.
 

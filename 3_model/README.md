@@ -1,4 +1,23 @@
-﻿# 🤖 AI 모델 파이프라인 (`3_model`)
+﻿`3_model`의 모든 학습 및 평가 작업은  
+**`1_data` 파이프라인에서 준비된 데이터를 전제 및 drive상 데이터로 실행됩니다..**
+
+모델 실행 전에 반드시 아래 단계를 완료해야 합니다.
+
+1. Google Drive에서 연구 데이터 다운로드
+2. 데이터 배치 경로 확인 (`1_data/raw_data`, `1_data/processed`)
+3. 필요 시 데이터 전처리 파이프라인 실행
+
+📥 **데이터 다운로드 링크 (필수)**  
+👉 https://drive.google.com/drive/folders/1dqhfSy4_nnQTqXvZ3yqMpgbpR1r0nOkn?usp=drive_link
+
+📘 **데이터 파이프라인 상세 설명**  
+👉 [`1_data/README.md`](../1_data/README.md)
+
+> ⚠️ 데이터가 존재하지 않거나 경로가 맞지 않으면  
+> `sikuroberta_train`, `swin_train`, `ocr_eval` 등의 task는  
+> **즉시 오류가 발생하거나 실행되지 않습니다.**
+
+# 🤖 AI 모델 파이프라인 (`3_model`)
 
 `3_model/` 디렉토리는 **Epitext 프로젝트의 핵심 AI 모델**에 대한
 학습(Training) 및 평가(Evaluation)를 담당하는 **모델 파이프라인 모듈**입니다.
@@ -82,6 +101,25 @@ CLI 인자(`--task`)를 통해 원하는 모델/작업만 선택적으로 실행
 
 ---
 
+## 🧠 추론 / 복원 파이프라인 (Inference Pipelines)
+
+본 프로젝트는 학습(train) 및 평가(eval) 외에도  
+**실제 손상된 탁본 데이터를 복원하기 위한 추론 전용 파이프라인**을 제공합니다.
+
+### ✅ Swin Mask Restoration (`swin_restore`)
+
+- OCR 결과의 `MASK2` 영역 이미지를 입력으로 사용
+- SwinV2 모델을 이용해 **손상된 문자 이미지 Top-K 후보 복원**
+- 입력:
+  - OCR JSON (`box`, `type=MASK2`)
+  - 원본 탁본 이미지
+- 출력:
+  - JSON (각 마스크별 Top-K 문자 + 확률)
+
+````bash
+python -m 3_model.main --task swin_restore
+
+
 ## 3. 실행 방법 (중요)
 
 모든 명령은 **프로젝트 루트 디렉토리**에서 실행해야 합니다.
@@ -105,7 +143,7 @@ python -m 3_model.main --task all_train
 
 # 모든 평가 작업 실행
 python -m 3_model.main --task all_eval
-```
+````
 
 > ❗ `python 3_model/main.py` 방식은 상대 import 문제로 인해
 > 정상 동작하지 않을 수 있으므로 **반드시 `-m` 옵션을 사용**하세요.
@@ -132,7 +170,7 @@ python -m 3_model.main --task all_eval
   - `SIKU_TRAIN_DIR`, `SIKU_VALID_DIR`, `SIKU_TEST_DIR`
     : SikuRoBERTa 토큰화 텍스트 데이터셋
 
-> ⚠️ 모든 데이터 경로는 `1_data` 파이프라인의 출력 결과와 **정확히 일치해야 합니다.**
+> ⚠️ 모든 데이터 경로는 `1_data` 파이프라인의 출력 결과와 **정확히 일치해도 됩니다.**
 
 ---
 
