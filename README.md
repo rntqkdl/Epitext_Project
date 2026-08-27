@@ -16,9 +16,22 @@
 
 ---
 
-## 🌐 EpiText 프로젝트 생태계 (Repository Ecosystem)
+## 🏆 주요 성과 및 학술 실적 (Key Achievements)
 
-본 저장소(`rntqkdl/Epitext_Project`)는 **EpiText 프로젝트의 핵심 AI 모델링, 손실 함수 설계, 데이터 전처리 및 성능 검증 실험**을 담당한 코어 리서치 레포지토리입니다. 프로덕션 서비스 파이프라인(백엔드 API 및 프론트엔드 웹)은 아래 팀 메인 저장소와 연동되어 운영됩니다.
+- **🥇 대상 (정보통신기획평가원장상)**: 고려대학교 지능정보 SW아카데미 최종 프로젝트 경진대회 **1위 대상 수상** (2025.12)
+- **📄 학술지 논문 투고**: 한국통신학회(KICS) 및 한국정보기술학회(KIIT) 논문 투고 완료
+
+---
+
+## 🔗 관련 저장소 바로가기 (Repository Ecosystem)
+
+본 저장소(`rntqkdl/Epitext_Project`)는 **EpiText 프로젝트의 핵심 AI 모델링, 손실 함수 수식 설계, 데이터 정제 및 성능 검증 실험**을 담당한 코어 리서치 아카이브입니다. 실서비스 운영을 위한 백엔드 및 프론트엔드 코드는 아래 팀 메인 저장소에서 확인하실 수 있습니다.
+
+| 구분 | 저장소 링크 | 설명 및 담당 역할 |
+|---|---|---|
+| ⚙️ **메인 백엔드** | **[jincerity/Epitext_Back](https://github.com/jincerity/Epitext_Back)** | FastAPI 비동기 인퍼런스 서버, Docker 컨테이너라이징, Supabase DB 연동 |
+| 💻 **메인 프론트엔드** | **[jincerity/Epitext_Front](https://github.com/jincerity/Epitext_Front)** | 탁본 이미지 업로드, Grad-CAM 히트맵 시각화, 한문 번역 인터랙티브 UI |
+| 🔬 **리서치 및 모델링** | **[rntqkdl/Epitext_Project](https://github.com/rntqkdl/Epitext_Project)** | *(현재 저장소)* 13,000종 Swin V2 모델링, 커스텀 Loss 설계, 차등 학습률 실험 |
 
 ```
 [ EpiText 통합 시스템 아키텍처 및 레포지토리 연결 맵 ]
@@ -49,6 +62,15 @@
   |    - Grad-CAM 판단 근거 히트맵 뷰어 및 한문 번역 텍스트 표출                       |
   +-----------------------------------------------------------------------------------+
 ```
+
+---
+
+## 🛠️ 기술 스택 (Tech Stack)
+
+- **AI / Deep Learning**: Python, PyTorch, Swin Transformer V2, SikuRoBERTa, OpenCV, Hugging Face
+- **Explainable AI (XAI)**: Grad-CAM (Gradient-weighted Class Activation Mapping)
+- **Data Engineering**: Pandas, NumPy, EasyOCR, Otsu Thresholding, Morphology Filter
+- **Experiment & DevOps**: Git, GitHub, Conda, Jupyter Notebook, Docker
 
 ---
 
@@ -147,18 +169,3 @@ pip install -r requirements.txt
 
 - 🔗 **Google Drive 데이터 폴더**: [데이터셋 다운로드 링크](https://drive.google.com/drive/folders/1dqhfSy4_nnQTqXvZ3yqMpgbpR1r0nOkn?usp=drive_link)
 - 다운로드한 데이터를 압축 해제 후 `1_data/raw_data/` 하위 경로에 배치해 주세요.
-
----
-
-## 🏆 수상 및 학술 성과
-
-- **대상 (정보통신기획평가원장상)**: 고려대학교 지능정보 SW아카데미 최종 프로젝트 경진대회 1위 (2025.12)
-- **학술지 논문 투고**: 한국통신학회(KICS) 및 한국정보기술학회(KIIT) 논문 투고 완료
-
----
-
-## 🔗 관련 저장소 바로가기
-
-- **메인 백엔드 레포지토리 (FastAPI / Docker)**: [https://github.com/jincerity/Epitext_Back](https://github.com/jincerity/Epitext_Back)
-- **메인 프론트엔드 레포지토리 (Web UI)**: [https://github.com/jincerity/Epitext_Front](https://github.com/jincerity/Epitext_Front)
-- **리서치 및 모델링 레포지토리 (현재 저장소)**: [https://github.com/rntqkdl/Epitext_Project](https://github.com/rntqkdl/Epitext_Project)
